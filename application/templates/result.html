@@ -1,0 +1,13 @@
+{%extends "layout.html"%}
+{%block content%}
+
+{{ time }}
+
+{% for entry in result %}
+
+<div> {{entry['_id']}}</div>
+<div> {{entry["patient_count"]}}</div>
+<div> {{(entry["patient_count"] / count * 100) | round(2) }}</div>
+
+{% endfor %}
+{%endblock%}
