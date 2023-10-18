@@ -1,227 +1,108 @@
 {%extends "layout.html"%}
 {%block content%}
-    <div>
-        <form action="{{ url_for('result') }}" method="POST">
-            {{ form.csrf_token() }}
-            <fieldset class="form-group">
-                <legend>Patient Details</legend>
 
-                <div class="form-group">
-                    {{ form.age.label }}
-                    {% if form.age.errors %}
-                        {{ form.age(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.age.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
+    <style>
+        .mt-5 {
+            /* Replace 'your-color' with the desired color */
+            padding-top: 0px;
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        .glow-card{
+            padding-bottom: 30px;
+        }
+    </style>
+
+    <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card glow-card bg-dark text-white">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">BMI Index</h2>
+                        <!-- First Container for BMI Details (Weight and Height) -->
+                        <div class="container">
+                            <div class="form-group">
+                                {{ form.Weight.label }}
+                                {% if form.Weight.errors %}
+                                    {{ form.Weight(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.Weight.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.Weight(class="form-control") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.Height.label }}
+                                {% if form.Height.errors %}
+                                    {{ form.Height(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.Height.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.Height(class="form-control") }}
+                                {% endif %}
+                            </div>
                         </div>
-                    {% else %}
-                        {{ form.age(class="form-control") }}
-                    {% endif %}
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    {{ form.gender.label }}
-                    {% if form.gender.errors %}
-                        {{ form.gender(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.gender.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.gender(class="form-control") }}
-                    {% endif %}
-                </div>
-                
-
-                <div class="form-group">
-                    {{ form.region_of_origin.label }}
-                    {% if form.region_of_origin.errors %}
-                        {{ form.region_of_origin(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.region_of_origin.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.region_of_origin(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.cholestrol.label }}
-                    {% if form.cholestrol.errors %}
-                        {{ form.cholestrol(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.cholestrol.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.cholestrol(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.Weight.label }}
-                    {% if form.Weight.errors %}
-                        {{ form.Weight(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.Weight.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.Weight(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.Height.label }}
-                    {% if form.Height.errors %}
-                        {{ form.Height(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.Height.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.Height(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.symptoms.label }}
-                    {% if form.symptoms.errors %}
-                        {{ form.symptoms(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.symptoms.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.symptoms(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.medication.label }}
-                    {% if form.medication.errors %}
-                        {{ form.medication(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.medication.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.medication(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.pastmedical_history.label }}
-                    {% if form.pastmedical_history.errors %}
-                        {{ form.pastmedical_history(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.pastmedical_history.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.pastmedical_history(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.alcohol.label }}
-                    {% if form.alcohol.errors %}
-                        {{ form.alcohol(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.alcohol.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.alcohol(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.smoking.label }}
-                    {% if form.smoking.errors %}
-                        {{ form.smoking(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.smoking.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.smoking(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.diabetic.label }}
-                    {% if form.diabetic.errors %}
-                        {{ form.diabetic(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.diabetic.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.diabetic(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.family_history.label }}
-                    {% if form.family_history.errors %}
-                        {{ form.family_history(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.family_history.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.family_history(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.final_diagnosis.label }}
-                    {% if form.final_diagnosis.errors %}
-                        {{ form.final_diagnosis(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.final_diagnosis.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.final_diagnosis(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.year.label }}
-                    {% if form.year.errors %}
-                        {{ form.year(class="form-control is-invalid") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.year.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.year(class="form-control") }}
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    {{ form.submit(class="btn btn-outline-info") }}
-                </div>
-
-            </fieldset>
-        </form>
+            </div>
+        </div>
     </div>
-{%endblock%}
+
+    <!-- New Container for Patient Details -->
+    <div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="card glow-card bg-dark text-white">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Patient Details</h2>
+                        <div class="container">
+                            <div class="form-group">
+                                {{ form.symptoms.label }}
+                                {% if form.symptoms.errors %}
+                                    {{ form.symptoms(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.symptoms.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.symptoms(class="form-control") }}
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.medication.label }}
+                                {% if form.medication.errors %}
+                                    {{ form.medication(class="form-control is-invalid") }}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.medication.errors %}
+                                            <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    {{ form.medication(class="form-control") }}
+                                {% endif %}
+                            </div>
+                            <!-- Add other patient details fields here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .glow-card {
+            box-shadow: 0 0 20px rgba(252, 251, 251, 0.8); /* Glowing effect */
+        }
+    </style>
+
+{% endblock %}
