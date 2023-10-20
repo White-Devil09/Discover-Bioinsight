@@ -266,18 +266,16 @@
 
 
 
-    <div class="container">
+    <main class="container-fluid">
         <div class="row">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-                <div class="glassmorphism-frame">
-                    <h5 class="card-title">Your Card Title</h5>
-                    <p class="card-text">This is the content of your card. You can add any information or elements here.
-                    </p>
-                </div>
+                {% block content %}
+                {% endblock %}
             </div>
+            <div class="col-md-2"></div>
         </div>
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
         integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
