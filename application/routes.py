@@ -51,3 +51,7 @@ def result():
         print(f"{disease_name} | {patient_count} | {percentage_in_top_5:.2f}%")
         
     return render_template('result.html',result=result,time = end_time - start_time,count = total_patients_in_top_5)
+
+@app.route('/visualize')
+def visualize():
+    return "visualize"
