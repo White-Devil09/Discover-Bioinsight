@@ -40,11 +40,11 @@ def result():
     print(datetime.now()-start_time)
     result = list(db.patient_collection1.find(query))
     df = pd.DataFrame(result)
-    grouped = df.groupby('Diagnosis Name').size().reset_index(name='patient_count')
-    top_5_diagnoses = grouped.sort_values(by='patient_count', ascending=False).head(5)
+    grouped = df.groupby("Diagnosis Name").size().reset_index(name="patient_count")
+    top_5_diagnoses = grouped.sort_values(by="patient_count", ascending=False).head(5)
     total_patients_in_top_5 = 0
-    total_patients_in_top_5 = top_5_diagnoses['patient_count'].sum()
-    top_5_diagnoses['percentage'] = (top_5_diagnoses['patient_count'] / total_patients_in_top_5 * 100).round(2)
+    total_patients_in_top_5 = top_5_diagnoses["patient_count"].sum()
+    top_5_diagnoses['percentage'] = (top_5_diagnoses["patient_count"] / total_patients_in_top_5 * 100).round(2)
     # Convert the top 5 diagnoses to a dictionary
     top_5_diagnoses_dict = top_5_diagnoses.to_dict(orient='records')
     end_time = datetime.now()
