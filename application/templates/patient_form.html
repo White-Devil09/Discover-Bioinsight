@@ -1,108 +1,115 @@
-{%extends "layout.html"%}
-{%block content%}
+{% extends "layout.html" %}
+{% block content %}
 
-    <style>
-        .mt-5 {
-            /* Replace 'your-color' with the desired color */
-            padding-top: 0px;
-            padding-left: 0px;
-            padding-right: 0px;
-        }
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
 
-        .glow-card{
-            padding-bottom: 30px;
-        }
-    </style>
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 100%;
+    }
 
-    <div class="container-fluid mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card glow-card bg-dark text-white">
-                    <div class="card-body">
-                        <h2 class="card-title text-center mb-4">BMI Index</h2>
-                        <!-- First Container for BMI Details (Weight and Height) -->
-                        <div class="container">
-                            <div class="form-group">
-                                {{ form.Weight.label }}
-                                {% if form.Weight.errors %}
-                                    {{ form.Weight(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.Weight.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    {{ form.Weight(class="form-control") }}
-                                {% endif %}
-                            </div>
+    .form-control {
+        font-family: Arial, Helvetica, sans-serif;
+        box-shadow: 3px 3px 5px #888888;
+    }
 
-                            <div class="form-group">
-                                {{ form.Height.label }}
-                                {% if form.Height.errors %}
-                                    {{ form.Height(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.Height.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
-                                    {{ form.Height(class="form-control") }}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    .card {
+        border: none;
+    }
 
-    <!-- New Container for Patient Details -->
-    <div class="container-fluid mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card glow-card bg-dark text-white">
-                    <div class="card-body">
-                        <h2 class="card-title text-center mb-4">Patient Details</h2>
-                        <div class="container">
-                            <div class="form-group">
-                                {{ form.symptoms.label }}
-                                {% if form.symptoms.errors %}
-                                    {{ form.symptoms(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.symptoms.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
+    .blue-title {
+        background: linear-gradient(to right, #04396D, #00316380);
+        color: white;
+        padding: 10px;
+        border-radius: 15px;
+    }
+
+    .left_space {
+        padding-left: 30px;
+    }
+
+    .right_space {
+        padding-right: 30px;
+    }
+
+    .mt-5 {
+        padding-top: 30px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .row {
+        display: flex;
+    }
+</style>
+
+<div>
+    <div class="row">
+        <div class="col-md-8">
+            <form action="{{ url_for('result') }}" method="POST">
+                {{ form.csrf_token() }}
+                <fieldset class="form-group">
+                    <div class="row" style="margin-top: 20px;">
+                        <div class="col-md-6">
+                            <div class="card test-black">
+                                <div class="blue-title">
+                                    <h4 class="card-title text-center mb-0">Patient Details</h4>
+                                </div>
+                                <div class="form-group">
+                                    {{ form.symptoms.label }}
                                     {{ form.symptoms(class="form-control") }}
-                                {% endif %}
-                            </div>
-
-                            <div class="form-group">
-                                {{ form.medication.label }}
-                                {% if form.medication.errors %}
-                                    {{ form.medication(class="form-control is-invalid") }}
-                                    <div class="invalid-feedback">
-                                        {% for error in form.medication.errors %}
-                                            <span>{{ error }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% else %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.medication.label }}
                                     {{ form.medication(class="form-control") }}
-                                {% endif %}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.family_history.label }}
+                                    {{ form.family_history(class="form-control") }}
+                                </div>
+                                <div class="form-group">
+                                    {{ form.pastmedical_history.label }}
+                                    {{ form.pastmedical_history(class="form-control") }}
+                                </div>
                             </div>
-                            <!-- Add other patient details fields here -->
+                        </div>
+                        <div class="col-md-6 left_space" style="margin-top: 1spx;">
+                            <div class="card text-black">
+                                <div class="card-body">
+                                    <div class="blue-title">
+                                        <h4 class="card-title text-left mb-0">BMI Index</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.Weight.label }}
+                                        {{ form.Weight(class="form-control") }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.Height.label }}
+                                        {{ form.Height(class="form-control") }}
+                                    </div>
+                                    <br>
+                                    <div class="blue-title">
+                                        <h5 class="card-title text-left mb-0">Year from</h5>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ form.year.label }}
+                                        {{ form.year(class="form-control") }}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-outline-info") }}
+                    </div>
+                </fieldset>
+            </form>
         </div>
     </div>
-
-    <style>
-        .glow-card {
-            box-shadow: 0 0 20px rgba(252, 251, 251, 0.8); /* Glowing effect */
-        }
-    </style>
+</div>
 
 {% endblock %}

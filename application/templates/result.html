@@ -13,13 +13,15 @@
     <tbody>
         {% for entry in result %}
             <tr>
-                <td>{{ entry['_id'] }}</td>
+                <td>{{ entry['Diagnosis Name'] }}</td>
                 <td>{{ entry["patient_count"] }}</td>
-                <td>{{ (entry["patient_count"] / count * 100) | round(2) }}</td>
+                <td>{{ entry["percentage"] }}%</td>
+                <td><a href="javascript:void(0);" onclick="toggleAnalytics('{{ entry['Diagnosis Name'] }}')">Analytics</a></td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+
 
 
 <canvas id="pieChart" width="100" height="100"></canvas>
@@ -32,7 +34,7 @@
 
     {% for entry in result %}
         labels.push("{{ entry['_id'] }}");
-        percentages.push({{ (entry["patient_count"] / count * 100) | round(2) }});
+        percentages.push({{ entry["percentage"] }});
     {% endfor %}
 
     // Create a pie chart
@@ -58,6 +60,9 @@
         }
     });
 </script>
+
+
+
 {% endblock %}
 </body>
 </html>
