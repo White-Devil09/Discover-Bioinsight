@@ -14,7 +14,8 @@
     <tbody>
         {% for entry in result %}
         <tr>
-            <td><a href="javascript:void(0)" class="myButton" data-entry="{{ entry }}">{{ entry['Diagnosis Name'] }}</a></td>
+            <td><a href="javascript:void(0)" class="myButton" data-entry="{{ entry }}">{{ entry['Diagnosis Name'] }}</a>
+            </td>
             <td>{{ entry["patient_count"] }}</td>
             <td>{{ entry["percentage"] }}%</td>
         </tr>
@@ -22,25 +23,40 @@
     </tbody>
 </table>
 
-<div id="chart-container">
-    <canvas id="bar-chart"></canvas>
+<div id="chart-container" class="flex flex-col">
+    <div><canvas id="bar-chart"></canvas></div>
+    <div><canvas id="pie-chart"></canvas></div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     const chartContainer = document.getElementById("chart-container");
-    const chartCanvas = document.getElementById("bar-chart");
-    const ctx = chartCanvas.getContext("2d");
-    let chart = null;
+    const barChartCanvas = document.getElementById("bar-chart");
+    const pieChartCanvas = document.getElementById("pie-chart");
+    const ctx_bar = barChartCanvas.getContext("2d");
+    const ctx_pie = pieChartCanvas.getContext("2d");
+    let chartbar = null, chartpie = null;
 
     function createBarChart(data) {
-        if (chart) {
-            chart.destroy();
+        if (chartbar) {
+            chartbar.destroy();
         }
 
-        chart = new Chart(ctx, {
+        chartbar = new Chart(ctx_bar, {
             type: "bar",
             data: data,
+        });
+    }
+
+    function createPieChart(pieData) {
+        if (chartpie) {
+            chartpie.destroy();
+        }
+
+        chartpie = new Chart(ctx_pie, {
+            type: "pie",
+            data: pieData,
         });
     }
 
@@ -49,6 +65,7 @@
         const clickedButton = event.target;
         const entryData = JSON.parse(clickedButton.getAttribute("data-entry").split("'").join('"'));
 
+        console.log(entryData);
         const data = {
             labels: [entryData["Diagnosis Name"]],
             datasets: [
@@ -60,7 +77,25 @@
             ],
         };
 
+        const pieData = {
+            labels: ["Daily", "Never", "Occasionally", "Quit Smoking"],
+            datasets: [
+                {
+                    label: "Smoking stats",
+                    data: [entryData["daily_count"], entryData["never_count"], entryData["occasionally_count"], entryData["quit_smoking_count"]],
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.5)",  // Color for "Daily"
+                        "rgba(54, 162, 235, 0.5)",  // Color for "Never"
+                        "rgba(255, 206, 86, 0.5)",  // Color for "Occasionally"
+                        "rgba(75, 192, 192, 0.5)",  // Color for "Quit Smoking"
+                    ],
+                },
+            ],
+        };
+
+
         createBarChart(data);
+        createPieChart(pieData);
     }
 
     const buttons = document.querySelectorAll(".myButton");

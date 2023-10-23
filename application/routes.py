@@ -46,7 +46,29 @@ def result():
     total_patients_in_top_5 = top_5_diagnoses["patient_count"].sum()
     top_5_diagnoses['percentage'] = (top_5_diagnoses["patient_count"] / total_patients_in_top_5 * 100).round(2)
     # Convert the top 5 diagnoses to a dictionary
-    top_5_diagnoses_dict = top_5_diagnoses.to_dict(orient='records')
     end_time = datetime.now()
+    daily_counts = []
+    never_counts = []
+    occasionally_counts = []
+    quit_smoking_counts = []
+    for diagnosis_name in top_5_diagnoses['Diagnosis Name']:
+        diagnosis_df = df[df['Diagnosis Name'] == diagnosis_name]
+        daily_count = (diagnosis_df['Smoker'] == 'Daily').sum()
+        never_count = (diagnosis_df['Smoker'] == 'Never').sum()
+        occasionally_count = (diagnosis_df['Smoker'] == 'Occasionally').sum()
+        quit_smoking_count = (diagnosis_df['Smoker'] == 'Quit smoking').sum()
+
+        daily_counts.append(daily_count)
+        never_counts.append(never_count)
+        occasionally_counts.append(occasionally_count)
+        quit_smoking_counts.append(quit_smoking_count)
+
+    top_5_diagnoses['daily_count'] = daily_counts
+    top_5_diagnoses['never_count'] = never_counts
+    top_5_diagnoses['occasionally_count'] = occasionally_counts
+    top_5_diagnoses['quit_smoking_count'] = quit_smoking_counts
+
+    
+    top_5_diagnoses_dict = top_5_diagnoses.to_dict(orient='records')
     print("Time taken to execute query:", end_time - start_time)
     return render_template('result.html',df = df, result=top_5_diagnoses_dict,time = end_time - start_time,count = total_patients_in_top_5)
