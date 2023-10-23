@@ -66,6 +66,7 @@ google-pasta==0.2.0
 grapheme==0.6.0
 greenlet==2.0.1
 grpcio==1.59.0
+gunicorn==21.2.0
 gym==0.26.2
 gym-notices==0.0.8
 gyp==0.1
