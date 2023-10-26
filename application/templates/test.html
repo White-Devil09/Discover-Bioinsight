@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+{% block content %}
+<p>Total Patients: {{ count }}</p>
+<p>Time to fetch details: {{ time.total_seconds() }} seconds</p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Patient Count</th>
+            <th>Percentage</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in result %}
+        <tr>
+            <td><a href="javascript:void(0)" class="myButton" data-entry="{{ entry }}"
+                    heat-entry='{{ symptom_data_by_diagnosis_age_range[entry['Diagnosis Name']] | tojson }}'>{{
+                    entry['Diagnosis Name'] }}</a>
+            </td>
+            <td>{{ entry["patient_count"] }}</td>
+            <td>{{ entry["percentage"] }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div id="chart-container" class="flex flex-col">
+    <div><canvas id="bar-chart"></canvas></div>
+    <div><canvas id="pie-chart"></canvas></div>
+    <div id="heatmap"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script>
+    const chartContainer = document.getElementById("chart-container");
+    const barChartCanvas = document.getElementById("bar-chart");
+    const pieChartCanvas = document.getElementById("pie-chart");
+    const ctx_bar = barChartCanvas.getContext("2d");
+    const ctx_pie = pieChartCanvas.getContext("2d");
+    let chartbar = null, chartpie = null;
+
+    function createBarChart(data) {
+        if (chartbar) {
+            chartbar.destroy();
+        }
+
+        chartbar = new Chart(ctx_bar, {
+            type: "bar",
+            data: data,
+        });
+    }
+
+    function createPieChart(pieData) {
+        if (chartpie) {
+            chartpie.destroy();
+        }
+
+        chartpie = new Chart(ctx_pie, {
+            type: "pie",
+            data: pieData,
+        });
+    }
+
+    function createHeatmap(heatmapData) {
+        const layout = {
+            xaxis: { title: 'Age Group' },
+            yaxis: { title: 'Symptoms' },
+        };
+
+        const heatmapContainer = document.getElementById("heatmap");
+
+        if (heatmapContainer.data) {
+            Plotly.purge(heatmapContainer);
+        }
+
+        Plotly.newPlot(heatmapContainer, [heatmapData], layout);
+    }
+
+
+    // Function to handle button click
+    function handleButtonClick(event) {
+        const clickedButton = event.target;
+        const entryData = JSON.parse(clickedButton.getAttribute("data-entry").split("'").join('"'));
+
+        
+        const heatData = JSON.parse(clickedButton.getAttribute("heat-entry"));
+        const newdata = Object.values(heatData);
+        const keys = Object.keys(newdata[1]);
+
+        const valuesByKeys = {};
+        keys.forEach(key => {
+            valuesByKeys[key] = [];
+        });
+
+        // Iterate through the data and organize values by key
+        for (const key in newdata) {
+            keys.forEach(keyName => {
+                valuesByKeys[keyName].push(newdata[key][keyName]);
+            });
+        }
+
+        const data = {
+            labels: [entryData["Diagnosis Name"]],
+            datasets: [
+                {
+                    label: "Patient Count",
+                    data: [entryData["patient_count"]],
+                    backgroundColor: "rgba(255, 99, 132, 0.5)",
+                },
+            ],
+        };
+
+        const pieData = {
+            labels: ["Daily", "Never", "Occasionally", "Quit Smoking"],
+            datasets: [
+                {
+                    label: "Smoking stats",
+                    data: [entryData["daily_count"], entryData["never_count"], entryData["occasionally_count"], entryData["quit_smoking_count"]],
+                    backgroundColor: [
+                        "rgba(255, 99, 132, 0.5)",  // Color for "Daily"
+                        "rgba(54, 162, 235, 0.5)",  // Color for "Never"
+                        "rgba(255, 206, 86, 0.5)",  // Color for "Occasionally"
+                        "rgba(75, 192, 192, 0.5)",  // Color for "Quit Smoking"
+                    ],
+                },
+            ],
+        };
+
+        const heatmapData = {
+
+            x: Object.keys(heatData),
+            y: keys,
+            z: keys.map(key => valuesByKeys[key]),
+            type: 'heatmap',
+            colorscale: 'Viridis', 
+
+        }
+
+        createBarChart(data);
+        createPieChart(pieData);
+        createHeatmap(heatmapData);
+    }
+
+    const buttons = document.querySelectorAll(".myButton");
+
+    buttons.forEach((button) => {
+        button.addEventListener("click", handleButtonClick);
+    });
+
+</script>
+
+
+
+{% endblock %}
