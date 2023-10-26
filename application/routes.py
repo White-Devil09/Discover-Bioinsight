@@ -6,6 +6,7 @@ import pandas as pd
 from collections import defaultdict
 import json
 from collections import Counter
+import re
 
 @app.route('/')
 def patient_form():
@@ -16,19 +17,44 @@ def patient_form():
 def result():
     details = PatientForm(request.form)
     symptoms_to_search = details.symptoms.data
-    symptom_keywords = ['Nausea', "Irregular pulse"]
+    symptom_keywords = ['dizziness', 'restlessness', 'swelling in the ankles', 'severe headache', 'pain in the arm', 'pain in the shoulder', 'shortness of breath', 'feeling of indigestion', 'swelling in ankles', 'cough especially when lying down', 'palpitations', 'fatigue', 'wheezing', 'feeling of heartburn', 'feeling of fullness', 'loss of consciousness', 'cyanosis (bluish or grayish skin color)', 'sweating', 'nausea', 'cold sweats', 'blurry vision', 'chest pain', 'fainting', 'cold sweat', 'pain in the neck', 'pain in the jaw', 'irregular pulse', 'difficulty concentrating', 'headache', 'weakness']
     symptoms_to_search = [s for s in symptom_keywords if s in symptoms_to_search]
     medications_to_search = details.medication.data.split(",") 
     family_history_to_match = details.family_history.data
     year_to_filter = details.year.data
-    year_start = datetime(year_to_filter, 1, 1)
-    print(year_start)
+    print(year_to_filter)
     print(symptoms_to_search)
     query = {
-    "$or": [
-        {"Symptoms": {"$in": symptoms_to_search}},
-        {"Medications": {"$in": medications_to_search}},
-        {"Family History": family_history_to_match}
+        "$and": [
+            {
+                "Final Diagnosis Date": {
+                    "$gte": year_to_filter
+                }
+            },
+            {
+                "$or": [
+                    {
+                        "Symptoms": {
+                            "$elemMatch": {
+                                "$in": symptoms_to_search
+                            }
+                        }
+                    },
+                    {
+                        "Medications": {
+                            "$elemMatch": {
+                                "$in": medications_to_search
+                            }
+                        }
+                    },
+                    {
+                        "Family History": {
+                            "$regex": family_history_to_match,
+                            "$options": "i"
+                        }
+                    }
+                ]
+            }
         ]
     }
     start_time = datetime.now()

@@ -1,0 +1,7 @@
+Flask==2.2.5
+Flask-PyMongo==2.3.0
+Flask-WTF==1.2.1
+json5==0.9.14
+numpy==1.26.0
+pandas==2.1.1
+pymongo==4.5.0

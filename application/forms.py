@@ -17,5 +17,5 @@ class PatientForm(FlaskForm):
     diabetic = SelectField("Diabetic",choices=[("Yes","Yes"),("No","No")],default="No",validators=[DataRequired()])
     family_history = TextAreaField('Family History', validators=[DataRequired()])
     final_diagnosis = TextAreaField('Final Diagnosis', validators=[DataRequired()])
-    year = IntegerField('Year', validators=[DataRequired()])
+    year = IntegerField('Year',default=2020, validators=[DataRequired()])
     submit = SubmitField('Submit')
