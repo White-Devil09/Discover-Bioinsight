@@ -78,8 +78,9 @@
     </div>
     <div class="chart-column">
         <canvas id="symptoms-chart"></canvas>
-    </div>
-    <button id="toggle-button">Toggle Symptoms</button>
+        <canvas id="region-symptoms-chart" style="display: none;"></canvas>
+        <button id="toggle-button">Toggle Symptoms</button>
+    </div>    
 </div>
 <div id="chart-container row">
     <div class="chart-column smaller-chart">
@@ -95,9 +96,7 @@
         <canvas id="family-history-chart"></canvas>
     </div>
 </div>
-<div class="chart-container row">
-    <canvas id="region-symptoms-chart"></canvas>
-</div>
+
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -529,5 +528,21 @@
     buttons.forEach((button) => {
         button.addEventListener("click", handleButtonClick);
     });
+</script>
+
+<script>
+    document.getElementById('toggle-button').addEventListener('click', function () {
+    const firstCanvas = document.getElementById('symptoms-chart');
+    const secondCanvas = document.getElementById('region-symptoms-chart');
+
+    if (firstCanvas.style.display === 'none') {
+        firstCanvas.style.display = 'block';
+        secondCanvas.style.display = 'none';
+    } else {
+        firstCanvas.style.display = 'none';
+        secondCanvas.style.display = 'block';
+    }
+});
+
 </script>
 {% endblock %}
