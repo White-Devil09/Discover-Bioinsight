@@ -16,19 +16,33 @@ def patient_form():
 @app.route('/result', methods=['POST','GET'])
 def result():
     details = PatientForm(request.form)
-    symptoms_to_search = details.symptoms.data
-    symptom_keywords = ['dizziness', 'restlessness', 'swelling in the ankles', 'severe headache', 'pain in the arm', 'pain in the shoulder', 'shortness of breath', 'feeling of indigestion', 'swelling in ankles', 'cough especially when lying down', 'palpitations', 'fatigue', 'wheezing', 'feeling of heartburn', 'feeling of fullness', 'loss of consciousness', 'cyanosis (bluish or grayish skin color)', 'sweating', 'nausea', 'cold sweats', 'blurry vision', 'chest pain', 'fainting', 'cold sweat', 'pain in the neck', 'pain in the jaw', 'irregular pulse', 'difficulty concentrating', 'headache', 'weakness']
-    symptoms_to_search = [s for s in symptom_keywords if s in symptoms_to_search]
-    medications_to_search = details.medication.data.split(",") 
+    symptoms_freetext = details.symptoms.data.lower()
+    symptom_keywords = ['dizziness', 'restlessness', 'swelling in the ankles', 'severe headache', 'pain in the arm', 'pain in the shoulder', 
+                        'shortness of breath', 'feeling of indigestion', 'swelling in ankles', 'cough especially when lying down', 
+                        'palpitations', 'fatigue', 'wheezing', 'feeling of heartburn', 'feeling of fullness', 'loss of consciousness', 
+                        'cyanosis (bluish or grayish skin color)', 'sweating', 'nausea', 'cold sweats', 'blurry vision', 'chest pain', 'fainting', 
+                        'cold sweat', 'pain in the neck', 'pain in the jaw', 'irregular pulse', 'difficulty concentrating', 'headache', 'weakness']
+    symptoms_to_search = [s for s in symptom_keywords if s in symptoms_freetext]
+    
+    medication_keywords = ['aspirin', 'pioglitazone', 'simvastatin', 'linagliptin', 'isosorbide mononitrate', 'none', 'diltiazem', 'insulin', 'glyburide', 'glipizide', 'atorvastatin',
+                            'empagliflozin', 'ezetimibe', 'amlodipine', 'sitagliptin', 'hydrochlorothiazide', 'lovastatin', 'glimepiride', 'spironolactone', 'canagliflozin', 'dabigatran',
+                              'pravastatin', 'carvedilol', 'cilostazol', 'clopidogrel', 'metformin', 'gemfibrozil', 'rivaroxaban',
+                            'exenatide', 'enalapril', 'warfarin', 'metoprolol', 'atenolol', 'losartan', 'lisinopril', 'furosemide', 'prasugrel', 'apixaban', 'rosuvastatin', 'valsartan']
+    medications_free_text = details.medication.data.lower()
+    medications_to_search =  [s for s in medication_keywords if s in medications_free_text]
+
+
     family_history_to_match = details.family_history.data
     year_to_filter = details.year.data
+    to_year_to_filter = details.to_year.data
     print(year_to_filter)
     print(symptoms_to_search)
     query = {
         "$and": [
             {
                 "Final Diagnosis Date": {
-                    "$gte": year_to_filter
+                    "$gte": year_to_filter,
+                    "$lte": to_year_to_filter
                 }
             },
             {
