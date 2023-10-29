@@ -9,6 +9,22 @@ from collections import Counter
 import re
 
 @app.route('/')
+def index():
+    return render_template('landing.html')
+
+@app.route('/platform')
+def platform():
+    return render_template('platform.html')
+
+@app.route('/contact')
+def contact_us():
+    return "Hello contact"
+
+@app.route('/coming_soon')
+def coming_soon():
+    return " This page is under construction"
+
+@app.route('/patient_form', methods=['POST','GET'])
 def patient_form():
     form = PatientForm()
     return render_template('patient_form.html', form=form)
