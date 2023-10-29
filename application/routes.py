@@ -249,7 +249,7 @@ def result():
 
 
     bmi_ranges = [0, 18.5, 24.9, 29.9, 34.9, 39.9, 100]
-    bmi_labels = ['Underweight', 'Normal Weight', 'Overweight', 'Obesity I', 'Obesity II', 'Obesity III']
+    bmi_labels = ['Underweight [0-18.5]', 'Normal Weight [18.5-24.9]', 'Overweight [24.9-29.9]', 'Obesity I [29.9-34.9]', 'Obesity II [34.9-39.9]', 'Obesity III [>39.9]']
 
     # Use pandas' cut function to categorize BMI into ranges
     df['BMI Category'] = pd.cut(df['BMI Index'], bins=bmi_ranges, labels=bmi_labels)

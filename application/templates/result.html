@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
-<p style="font-size: 22px; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight:500;"> Out of 50,000 deidentified patient records, {{ count }} unique patient records <br> were found who had similar clinical support as your patient.</p>
+<p style="font-size: 22px; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight:500;"> Out of 50,000 deidentified patient records, {{ count }} unique patient records <br> were found who had similar clinical profile as your patient.</p>
+<p style="font-size: 22px; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight:500;"> <b> NOTE FOR THE DOCTOR:</b> These analytics are to support you (the doctor) in making a clinical decision. Discover BioInsights is NOT a diagnostic tool.</p>
 <p style="font-size: 20px; text-align: left; font-family: 'Times New Roman', Times, serif;">Time taken to fetch matching patient records: {{ time.total_seconds() }} seconds</p>
 
 <style>
@@ -92,11 +93,12 @@
 
 <div class="charts-container row">
     <div class="chart-column chart-container">
-        <canvas id="bar-chart"></canvas>
+        <canvas id="symptoms-chart"></canvas>
+        <canvas id="region-symptoms-chart" style="display: none;"></canvas>
+        <button id="toggle-button">Toggle Symptoms</button>
+    </div> 
+    
     </div>
-    <div class="chart-column chart-container">
-        <canvas id="region-chart"></canvas>
-    </div></div>
 <div class="charts-container row">
     <div class="heatmap-full-width chart-container">
         <div id="heatmap"></div>
@@ -104,32 +106,34 @@
 </div>
 <div class="charts-container row">
     <div class="chart-column chart-container">
-        <canvas id="bmi-histogram-chart"></canvas>
-    </div>
-    <div class="chart-column chart-container">
-        <canvas id="symptoms-chart"></canvas>
-        <canvas id="region-symptoms-chart" style="display: none;"></canvas>
-        <button id="toggle-button">Toggle Symptoms</button>
-    </div>    
-</div>
-<div id="chart-container row" style="display: flex;flex-direction: row;">
-    <div class="chart-column smaller-chart chart-container">
-        <canvas id="sex-pie-chart"></canvas>
-    </div>
-    <div class = "chart-column chart-container">
-        <canvas id="past-medical-chart"></canvas>
-    </div>
-</div>
-
-<div class="charts-container row">
-    <div class="chart-column chart-container">
-        <canvas id="medications-pie-chart"></canvas>
-    </div>
+        <canvas id="region-chart"></canvas>
+    </div>  
     <div class="chart-column chart-container">
         <canvas id="family-history-chart"></canvas>
     </div>
+   
+</div>
+<div id="chart-container row" >
+    <div class = "chart-column chart-container">
+        <canvas id="past-medical-chart"></canvas>
+    </div>
+    <div class="chart-column chart-container">
+        <canvas id="medications-pie-chart"></canvas>
+    </div>
 </div>
 
+<div class="charts-container row" >
+    <div class="chart-column chart-container">
+        <canvas id="bmi-histogram-chart"></canvas>
+    </div>
+    <div class="chart-column chart-container">
+        <canvas id="bar-chart"></canvas>
+    </div>
+</div>
+
+<div class="chart-column smaller-chart chart-container" style="width: 50%;">
+    <canvas id="sex-pie-chart"></canvas>
+</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -344,7 +348,7 @@
                     x: {
                         title: {
                             display: true,
-                            text: "Medications",
+                            text: "Family history",
                         },
                     },
                 },
