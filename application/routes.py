@@ -46,7 +46,12 @@ def result():
                             'exenatide', 'enalapril', 'warfarin', 'metoprolol', 'atenolol', 'losartan', 'lisinopril', 'furosemide', 'prasugrel', 'apixaban', 'rosuvastatin', 'valsartan']
     medications_free_text = details.medication.data.lower()
     medications_to_search =  [s for s in medication_keywords if s in medications_free_text]
-
+    family_history_to_match = details.family_history.data.lower()
+    family_history_list = []
+    family_history_list.append(family_history_to_match)
+    past_medical_history = details.pastmedical_history.data.lower()
+    past_medical_history_list = []
+    past_medical_history_list.append(past_medical_history)
 
     family_history_to_match = details.family_history.data
     year_to_filter = details.year.data
@@ -82,21 +87,50 @@ def result():
                             "$regex": family_history_to_match,
                             "$options": "i"
                         }
+                    },
+                    {
+                        "Past Medical History": {
+                            "$in": past_medical_history_list
+                        }
                     }
                 ]
             }
         ]
     }
+
+    pipeline = [
+        {
+            "$match": query
+        },
+        {
+            "$group": {
+                "_id": "$Diagnosis Name",
+                "count": { "$sum": 1 },
+                "data": { "$push": "$$ROOT" }
+            }
+        },
+        {
+            "$sort": {"count": -1}
+        },
+        {
+            "$limit": 5
+        },
+        {
+            "$unwind" : "$data"
+        },
+        {
+            "$replaceRoot": { "newRoot": "$data" }
+        }
+    ]
     start_time = datetime.now()
-    result = list(db.patient_collection1.find(query))
-    df = pd.DataFrame(result)
-    print("database: columns are", df.columns)
+    cursor = list(db.patient_collection1.aggregate(pipeline))
+
+    df = pd.DataFrame(cursor)
     grouped = df.groupby("Diagnosis Name").size().reset_index(name="patient_count")
     top_5_diagnoses = grouped.sort_values(by="patient_count", ascending=False).head(5)
     top_diagnoses_names = top_5_diagnoses['Diagnosis Name'].tolist()
 
 
-    df = df[df['Diagnosis Name'].isin(top_diagnoses_names)]
     total_patients_in_top_5 = 0
     total_patients_in_top_5 = top_5_diagnoses["patient_count"].sum()
     top_5_diagnoses['percentage'] = (top_5_diagnoses["patient_count"] / total_patients_in_top_5 * 100).round(2)
@@ -104,21 +138,10 @@ def result():
 
 
     # smoker_calculation
-    daily_counts = []
-    never_counts = []
-    occasionally_counts = []
-    quit_smoking_counts = []
-    for diagnosis_name in top_5_diagnoses['Diagnosis Name']:
-        diagnosis_df = df[df['Diagnosis Name'] == diagnosis_name]
-        daily_count = (diagnosis_df['Smoker'] == 'Daily').sum()
-        never_count = (diagnosis_df['Smoker'] == 'Never').sum()
-        occasionally_count = (diagnosis_df['Smoker'] == 'Occasionally').sum()
-        quit_smoking_count = (diagnosis_df['Smoker'] == 'Quit smoking').sum()
-
-        daily_counts.append(daily_count)
-        never_counts.append(never_count)
-        occasionally_counts.append(occasionally_count)
-        quit_smoking_counts.append(quit_smoking_count)
+    daily_counts = [sum((df['Smoker'] == 'Daily') & (df['Diagnosis Name'] == diag)) for diag in top_5_diagnoses['Diagnosis Name']]
+    never_counts = [sum((df['Smoker'] == 'Never') & (df['Diagnosis Name'] == diag)) for diag in top_5_diagnoses['Diagnosis Name']]
+    occasionally_counts = [sum((df['Smoker'] == 'Occasionally') & (df['Diagnosis Name'] == diag)) for diag in top_5_diagnoses['Diagnosis Name']]
+    quit_smoking_counts = [sum((df['Smoker'] == 'Quit smoking') & (df['Diagnosis Name'] == diag)) for diag in top_5_diagnoses['Diagnosis Name']]
 
     top_5_diagnoses['daily_count'] = daily_counts
     top_5_diagnoses['never_count'] = never_counts
@@ -130,6 +153,9 @@ def result():
     medication_data_by_diagnosis = {}
     family_history_by_diagnosis = {}
     region_symptom_data = {}
+    region_counts = {}
+    sex_chart_data = {}
+    past_medical_history= {}
     # symptoms and medications calculations
     for disease_name in top_5_diagnoses['Diagnosis Name']:
         patients_for_disease = df[df["Diagnosis Name"] == disease_name]
@@ -151,8 +177,16 @@ def result():
             'labels': list(family_history_counts.keys()),
             'data': list(family_history_counts.values()),
         }
-        medications_counts = patients_for_disease['Medications'].explode().value_counts().head(7).to_dict()
 
+        all_past_medical_history = patients_for_disease['Past Medical History']
+        past_medical_history_counts = all_past_medical_history.value_counts().head(5).to_dict()
+        past_medical_history[disease_name] = {
+            'labels': list(past_medical_history_counts.keys()),
+            'data': list(past_medical_history_counts.values()),
+        }
+
+
+        medications_counts = patients_for_disease['Medications'].explode().value_counts().head(7).to_dict()
         # Prepare the data for the pie chart
         medications_labels = list(medications_counts.keys())
         medications_data = list(medications_counts.values())
@@ -172,8 +206,6 @@ def result():
         }
 
 
-    region_counts = {}
-    sex_chart_data = {}
     for diagnosis_name in top_diagnoses_names:
         diagnosis_df = df[df['Diagnosis Name'] == diagnosis_name]
         region_counts[diagnosis_name] = diagnosis_df['Region Of Origin'].value_counts().to_dict()
@@ -231,11 +263,12 @@ def result():
     
     medications_chart_data_json = json.dumps(medication_data_by_diagnosis)
     family_history_by_diagnosis_json = json.dumps(family_history_by_diagnosis)
+    past_medical_history = json.dumps(past_medical_history)
     end_time = datetime.now()
     print("Time taken to execute query:", end_time - start_time)
 
 
     return render_template('result.html', bmi_histogram_dict=bmi_histogram_dict , result=top_5_diagnoses_dict,time = end_time - start_time,count = total_patients_in_top_5, symptom_data_by_diagnosis=symptom_data_by_diagnosis,
                             region_counts=region_counts,symptom_data_by_diagnosis_age_range=symptom_data_by_diagnosis_age_range,
-                            gender_chart = sex_chart_data_json, medications_chart_data_ = medications_chart_data_json,
+                            gender_chart = sex_chart_data_json, medications_chart_data_ = medications_chart_data_json,past_medical_history = past_medical_history,
                             family_history_by_diagnosis_json=family_history_by_diagnosis_json, region_symptom_data = region_symptom_data)

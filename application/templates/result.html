@@ -61,6 +61,11 @@
         max-width: 400px;
         text-align: center; /* Adjust the max width as needed */
     }
+    .row .chart-column {
+        flex: 1;
+        padding-top: 20px;
+        margin-right: 10px;
+    }
 </style>
 <h2 style="text-align: center; font-family:'Times New Roman', Times, serif; font-weight: bold;">Similarity Analysis (out of {{ count }})</h2>
 <table class="table" style="max-width: 1000px; margin: 0 auto; padding-bottom: 30px;">
@@ -111,6 +116,9 @@
     <div class="chart-column smaller-chart chart-container">
         <canvas id="sex-pie-chart"></canvas>
     </div>
+    <div class = "chart-column chart-container">
+        <canvas id="past-medical-chart"></canvas>
+    </div>
 </div>
 
 <div class="charts-container row">
@@ -154,7 +162,53 @@
     const regionSymptomsCanvas = document.getElementById("region-symptoms-chart");
     const regionSymptomsCtx = regionSymptomsCanvas.getContext("2d");
     let regionSymptomsChart = null
-    
+    const pastMedicalCanvas = document.getElementById("past-medical-chart")
+    const pastMedicalCTx = pastMedicalCanvas.getContext("2d");
+    let pastMedicalchart = null;
+
+
+    function createpastmedicalmap(data) {
+        if(pastMedicalchart) {
+            pastMedicalchart.destroy();
+        }
+        pastMedicalchart = new Chart(pastMedicalCTx, {
+            type: "bar",
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: "",
+                        data: data.data,
+                        backgroundColor: [
+                            "#FF5733",
+                            "#FFC300",
+                            "#C70039",
+                            "#581845",
+                            "#900C3F"
+                        ],
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "Count",
+                        },
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Top 5 most common Past Medical Histories",
+                        },
+                    },
+                },
+            },
+        })
+    }
+
 
     function createHeatmap(heatmapData) {
         const layout = {
@@ -555,6 +609,8 @@
             const regionSymptomsData = regionSymptomData[diagnosisName];
             createRegionSymptomsChart(regionSymptomsData);
         }
+        const pastmedicaldata = {{ past_medical_history | safe}};
+        createpastmedicalmap(pastmedicaldata[diagnosisName]);
         
     }
        
