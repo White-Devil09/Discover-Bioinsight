@@ -27,12 +27,13 @@ def coming_soon():
 @app.route('/patient_form', methods=['POST','GET'])
 def patient_form():
     form = PatientForm()
-    show_alert = session.get('show_alert', False)
+    show_alert = False
     return render_template('patient_form.html',show_alert=show_alert, form=form, show_content=True)
 
 @app.route('/result', methods=['POST','GET'])
 def result():
     details = PatientForm(request.form)
+    symptoms_to_search = []
     symptoms_freetext = details.symptoms.data.lower()
     symptom_keywords = ['dizziness', 'restlessness', 'swelling in the ankles', 'severe headache', 'pain in the arm', 'pain in the shoulder', 
                         'shortness of breath', 'feeling of indigestion', 'swelling in ankles', 'cough especially when lying down', 
@@ -40,25 +41,39 @@ def result():
                         'cyanosis (bluish or grayish skin color)', 'sweating', 'nausea', 'cold sweats', 'blurry vision', 'chest pain', 'fainting', 
                         'cold sweat', 'pain in the neck', 'pain in the jaw', 'irregular pulse', 'difficulty concentrating', 'headache', 'weakness']
     symptoms_to_search = [s for s in symptom_keywords if s in symptoms_freetext]
-    
+    medications_to_search = []
     medication_keywords = ['aspirin', 'pioglitazone', 'simvastatin', 'linagliptin', 'isosorbide mononitrate', 'none', 'diltiazem', 'insulin', 'glyburide', 'glipizide', 'atorvastatin',
                             'empagliflozin', 'ezetimibe', 'amlodipine', 'sitagliptin', 'hydrochlorothiazide', 'lovastatin', 'glimepiride', 'spironolactone', 'canagliflozin', 'dabigatran',
                               'pravastatin', 'carvedilol', 'cilostazol', 'clopidogrel', 'metformin', 'gemfibrozil', 'rivaroxaban',
                             'exenatide', 'enalapril', 'warfarin', 'metoprolol', 'atenolol', 'losartan', 'lisinopril', 'furosemide', 'prasugrel', 'apixaban', 'rosuvastatin', 'valsartan']
     medications_free_text = details.medication.data.lower()
     medications_to_search =  [s for s in medication_keywords if s in medications_free_text]
+
+
     family_history_to_match = details.family_history.data.lower()
     family_history_list = []
-    family_history_list.append(family_history_to_match)
+    family_history_keywords = ['hyperlipidemia', 'hypertension', 'inflammatory bowel disease ibd', 'hemorrhoids', 'osteoarthritis', 'gout', 'coronary artery disease','drug abuse', 'peptic ulcer disease',
+                               'depression', 'congestive heart failure', 'irritable bowel syndrome ibs', 'high blood pressure during pregnancy preeclampsia', 'psoriasis','cataracts', 'dementia', "parkinson's disease",
+                                'family history of heart disease', 'prostate enlargement bph','rheumatoid arthritis', 'thyroid disorders', 'smoking', 'glaucoma','osteoporosis', 'erectile dysfunction', 'chronic liver disease'
+                                'cancer various types', 'gallstones', 'alcoholism', 'multiple sclerosis', 'polycystic ovary syndrome pcos', 'angina pectoris', 'stroke', 'asthma','kidney stones', 'anxiety', 'chronic kidney disease',
+                                'hearing loss', 'obesity', 'peripheral artery disease', 'myocardial infarction heart attack', 'diverticulitis', 'sleep apnea', 'obstructive pulmonary disease copd',
+                                'gestational diabetes', 'chronic gastritis', 'atrial fibrillation', 'type 2 diabetes','migraine headaches']
+    family_history_list = [s for s in family_history_keywords if s in family_history_to_match]
+
     past_medical_history = details.pastmedical_history.data.lower()
     past_medical_history_list = []
-    past_medical_history_list.append(past_medical_history)
+    past_medical_history_keywords = ['obesity', 'cancer various types' ,'gallstones' 'psoriasis' ,'cataracts' ,'anxiety' ,'erectile dysfunction', 'gestational diabetes', 'high blood pressure during pregnancy preeclampsia',
+                                        'smoking','rheumatoid arthritis', 'depression', 'chronic liver disease', 'asthma', 'dementia', 'family history of heart disease', 'type 2 diabetes',
+                                        'peptic ulcer disease', 'myocardial infarction heart attack', 'obstructive pulmonary disease copd', 'multiple sclerosis''polycystic ovary syndrome pcos' ,
+                                        'glaucoma', 'congestive heart failure','hypertension', 'hearing loss', 'inflammatory bowel disease ibd', 'irritable bowel syndrome ibs', 'sleep apnea', "parkinson's disease"
+                                        'thyroid disorders', 'prostate enlargement bph', 'diverticulitis', 'osteoporosis', 'coronary artery disease', 'alcoholism', 'osteoarthritis',
+                                        'hyperlipidemia', 'kidney stones', 'chronic kidney disease', 'angina pectoris', 'hemorrhoids', 'migraine headaches', 'peripheral artery disease', 'gout',
+                                        'stroke', 'drug abuse', 'chronic gastritis', 'atrial fibrillation']
+    past_medical_history_list = [s for s in past_medical_history_keywords if s in past_medical_history]
     bmi_index = details.Weight.data / (details.Height.data/100)**2
     family_history_to_match = details.family_history.data
     year_to_filter = details.year.data
     to_year_to_filter = details.to_year.data
-    print(year_to_filter)
-    print(symptoms_to_search)
     query = {
         "$and": [
             {
@@ -85,8 +100,7 @@ def result():
                     },
                     {
                         "Family History": {
-                            "$regex": family_history_to_match,
-                            "$options": "i"
+                            "$in": family_history_list
                         }
                     },
                     {
@@ -128,6 +142,7 @@ def result():
 
     df = pd.DataFrame(cursor)
     if df.empty:
+        print("hii")
         session['show_alert'] = True 
         return redirect(url_for('patient_form'))
     grouped = df.groupby("Diagnosis Name").size().reset_index(name="patient_count")
@@ -142,15 +157,6 @@ def result():
 
 
     # smoker_calculation
-    daily_counts = [sum((df['Smoker'] == 'Daily') & (df['Diagnosis Name'] == diag)) for diag in top_5_diagnoses['Diagnosis Name']]
-    never_counts = [sum((df['Smoker'] == 'Never') & (df['Diagnosis Name'] == diag)) for diag in top_5_diagnoses['Diagnosis Name']]
-    occasionally_counts = [sum((df['Smoker'] == 'Occasionally') & (df['Diagnosis Name'] == diag)) for diag in top_5_diagnoses['Diagnosis Name']]
-    quit_smoking_counts = [sum((df['Smoker'] == 'Quit smoking') & (df['Diagnosis Name'] == diag)) for diag in top_5_diagnoses['Diagnosis Name']]
-
-    top_5_diagnoses['daily_count'] = daily_counts
-    top_5_diagnoses['never_count'] = never_counts
-    top_5_diagnoses['occasionally_count'] = occasionally_counts
-    top_5_diagnoses['quit_smoking_count'] = quit_smoking_counts
 
 
     symptom_data_by_diagnosis = {}
@@ -160,6 +166,7 @@ def result():
     region_counts = {}
     sex_chart_data = {}
     past_medical_history= {}
+    smoker_counts_by_diagnosis = {}
     # symptoms and medications calculations
     for disease_name in top_5_diagnoses['Diagnosis Name']:
         patients_for_disease = df[df["Diagnosis Name"] == disease_name]
@@ -181,21 +188,21 @@ def result():
             'labels': list(family_history_counts.keys()),
             'data': list(family_history_counts.values()),
         }
-
+        all_smoking = patients_for_disease['Smoker']
+        smoker_counts = all_smoking.value_counts().to_dict()
+        smoker_counts_by_diagnosis[disease_name] = {
+            'labels': list(smoker_counts.keys()),
+            'data': list(smoker_counts.values()),
+        }
         all_past_medical_history = patients_for_disease['Past Medical History']
         past_medical_history_counts = all_past_medical_history.value_counts().head(5).to_dict()
         past_medical_history[disease_name] = {
             'labels': list(past_medical_history_counts.keys()),
             'data': list(past_medical_history_counts.values()),
         }
-
-
         medications_counts = patients_for_disease['Medications'].explode().value_counts().head(7).to_dict()
-        # Prepare the data for the pie chart
         medications_labels = list(medications_counts.keys())
         medications_data = list(medications_counts.values())
-
-        # Store the data in the medications_chart_data dictionary
         medication_data_by_diagnosis[disease_name] = {
             'labels': medications_labels,
             'data': medications_data,
@@ -208,11 +215,19 @@ def result():
             'top_symptoms': top_symptoms,
             'region_data': grouped.to_dict(orient='split'),
         }
+        all_regions = patients_for_disease['Region Of Origin']
+        region_count = all_regions.value_counts().to_dict()
+        region_counts[disease_name] = {
+            'labels' : list(region_count.keys()),
+            'data' : list(region_count.values()),
+        }
+
+
 
 
     for diagnosis_name in top_diagnoses_names:
         diagnosis_df = df[df['Diagnosis Name'] == diagnosis_name]
-        region_counts[diagnosis_name] = diagnosis_df['Region Of Origin'].value_counts().to_dict()
+        # region_counts[diagnosis_name] = diagnosis_df['Region Of Origin'].value_counts().head().to_dict()
         sex_counts = diagnosis_df['Gender'].value_counts().to_dict()
         sex_labels = list(sex_counts.keys())
         sex_data = list(sex_counts.values())
@@ -252,8 +267,8 @@ def result():
 
 
 
-    bmi_ranges = [0, 18.5, 24.9, 29.9, 34.9, 39.9, 100]
-    bmi_labels = ['Underweight [0-18.5]', 'Normal Weight [18.5-24.9]', 'Overweight [24.9-29.9]', 'Obesity I [29.9-34.9]', 'Obesity II [34.9-39.9]', 'Obesity III [>39.9]']
+    bmi_ranges = [0, 10, 20, 30, 40, 50, 60, 70, 150]
+    bmi_labels = ['0-10', '10-20', '20-30', '30-40', '40-50', '50-60', '60-70', '70<']
 
     # Use pandas' cut function to categorize BMI into ranges
     df['BMI Category'] = pd.cut(df['BMI Index'], bins=bmi_ranges, labels=bmi_labels)
@@ -263,16 +278,23 @@ def result():
         bmi_histogram = group['BMI Category'].value_counts().sort_index().to_dict()
         bmi_histogram_dict[diagnosis_name] = bmi_histogram
     top_5_diagnoses_dict = top_5_diagnoses.to_dict(orient='records')
-
+    bmi_class = None
+    for i, upper_limit in enumerate(bmi_ranges[1:]):
+        if bmi_index < upper_limit:
+            bmi_class = bmi_labels[i]
+            break
+    else:
+        bmi_class = bmi_labels[-1]
     
     medications_chart_data_json = json.dumps(medication_data_by_diagnosis)
     family_history_by_diagnosis_json = json.dumps(family_history_by_diagnosis)
     past_medical_history = json.dumps(past_medical_history)
+    smoker_counts_by_diagnosis_json = json.dumps(smoker_counts_by_diagnosis)
     end_time = datetime.now()
     print("Time taken to execute query:", end_time - start_time)
-
+    region_counts_json = json.dumps(region_counts)
 
     return render_template('result.html', bmi_histogram_dict=bmi_histogram_dict , result=top_5_diagnoses_dict,time = end_time - start_time,count = total_patients_in_top_5, symptom_data_by_diagnosis=symptom_data_by_diagnosis,
-                            region_counts=region_counts,symptom_data_by_diagnosis_age_range=symptom_data_by_diagnosis_age_range,
+                            region_counts_json=region_counts_json,symptom_data_by_diagnosis_age_range=symptom_data_by_diagnosis_age_range,bmi_class = bmi_class,smoker_counts_by_diagnosis_json= smoker_counts_by_diagnosis_json,
                             gender_chart = sex_chart_data_json, medications_chart_data_ = medications_chart_data_json,past_medical_history = past_medical_history,
                             family_history_by_diagnosis_json=family_history_by_diagnosis_json, region_symptom_data = region_symptom_data, bmi_index = bmi_index)

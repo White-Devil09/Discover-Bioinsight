@@ -280,9 +280,6 @@
         if (medicationsPieChart) {
             medicationsPieChart.destroy();
         }
-        console.log("data", data)
-        console.log("top_medications:", data.data);
-        console.log("labels:", data.labels);
         medicationsPieChart = new Chart(medicationsCtx, {
             type: "bar",
             data: {
@@ -357,11 +354,19 @@
         });
     }
 
-    function createBMIHistogram(data, bmi_index) {
+
+    function createBMIHistogram(data, bmiIndexData, bmiclass) {
         if (bmiHistogramChart) {
             bmiHistogramChart.destroy();
         }
 
+        const backgroundColors = data.labels.map(label => {
+            if (label === bmiclass) {
+                return "red"; // Set the color for the specified class
+            } else {
+                return "rgba(75, 192, 192, 0.2)"; // Default color
+            }
+        });
         bmiHistogramChart = new Chart(bmiHistogramCtx, {
             type: "bar",
             data: {
@@ -370,7 +375,7 @@
                     {
                         label: "BMI Index",
                         data: data.histogram_data,
-                        backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        backgroundColor: backgroundColors,
                         borderColor: "rgba(75, 192, 192, 1)",
                         borderWidth: 1,
                     },
@@ -387,8 +392,47 @@
                     },
                     x: {
                         title: {
-                            display: true,
+                            display: false,
                             text: "BMI Index",
+                        },
+                    },
+                },
+                indexAxis: 'x',
+                barPercentage: 1.0,
+                categoryPercentage: 1.0,
+            },
+        });
+    }
+
+    function createsmoking_history(data) {
+        if (chart) {
+            chart.destroy();
+        }
+        chart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: "Smoking Habits",
+                        data: data.data,
+                        backgroundColor: "#87CEFA"
+                    },
+                ],
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "Count",
+                        },
+                    },
+                    x: {
+                        title: {
+                            display: false,
+                            text: "Smoking Habits",
                         },
                     },
                 },
@@ -396,75 +440,6 @@
         });
     }
 
-    
-
-
-    function createBarChart(data) {
-        if (chart) {
-            chart.destroy();
-        }
-        const labels = data.labels;
-        const dailyCount = data.daily_count;
-        const neverCount = data.never_count;
-        const occasionallyCount = data.occasionally_count;
-        const quitSmokingCount = data.quit_smoking_count;
-        const dataArray = labels.map((label, index) => ({
-            label,
-            daily_count: dailyCount[index],
-            never_count: neverCount[index],
-            occasionally_count: occasionallyCount[index],
-            quit_smoking_count: quitSmokingCount[index],
-        }));
-        dataArray.sort((a, b) => b.daily_count - a.daily_count);
-
-        // Extract sorted labels and data arrays
-        const sortedLabels = dataArray.map(item => item.label);
-        
-        const sortedDailyCount = dataArray.map(item => item.daily_count);
-        const sortedNeverCount = dataArray.map(item => item.never_count);
-        const sortedOccasionallyCount = dataArray.map(item => item.occasionally_count);
-        const sortedQuitSmokingCount = dataArray.map(item => item.quit_smoking_count);
-        chart = new Chart(ctx, {
-            type: "bar",
-            data: {
-                labels: sortedLabels,
-                datasets: [
-                    {
-                        label: "Daily",
-                        data: sortedDailyCount,
-                        backgroundColor: "rgba(128, 0, 0, 0.5)",
-                    },
-                    {
-                        label: "Never",
-                        data: sortedNeverCount,
-                        backgroundColor: "rgba(0, 0, 128, 0.5)",
-                    },
-                    {
-                        label: "Occasionally",
-                        data: sortedOccasionallyCount,
-                        backgroundColor: "rgba(128, 128, 0, 0.5)",
-                    },
-                    {
-                        label: "Quit Smoking",
-                        data: sortedQuitSmokingCount,
-                        backgroundColor: "rgba(0, 128, 128, 0.5)",
-                    },
-                ]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: "Frequency of Smoking Habits",
-                        fontsize: 20,
-                    },
-                },
-                legend: {
-                    display: false,
-                },
-            },
-        });
-    }
 
     function createRegionChart(data){
         if(regionChart) {
@@ -475,11 +450,11 @@
         regionChart = new Chart(regionCtx,{
             type: "bar",
             data : {
-                labels: labels,
+                labels: data.labels,
                 datasets: [
                     {   
                         labels: "Region wise patients",
-                        data: counts,
+                        data: data.data,
                         backgroundColor: "rgba(0, 128, 128, 0.5)",
                     },
                 ],
@@ -518,7 +493,6 @@
         if (symptomsChart) {
             symptomsChart.destroy();
         }
-        console.log(data);
         symptomsChart = new Chart(symptomsCtx, {
             type: "bar",
             data: {
@@ -583,25 +557,18 @@
         }
         createHeatmap(heatmapData);
 
-
-        const data = {
-            labels: [entryData["Diagnosis Name"]],
-            daily_count: [entryData["daily_count"]],
-            never_count: [entryData["never_count"]],
-            occasionally_count: [entryData["occasionally_count"]],
-            quit_smoking_count: [entryData["quit_smoking_count"]],
-        };
-
-        createBarChart(data);
-
         const bmiHistogramData = {{ bmi_histogram_dict|tojson|safe }};
         const diagnosisName = entryData["Diagnosis Name"];
         document.getElementById("diagnosis-heading").textContent = `Analytics - ${diagnosisName}`;
         const symptomsData = {{ symptom_data_by_diagnosis|tojson|safe }};
-        const regionData = {{ region_counts|tojson|safe }};
+        const regionData = {{ region_counts_json|safe }};
         const symptom_data_by_diagnosis_agerange = {{ symptom_data_by_diagnosis_age_range|tojson|safe}}; 
         const medicationsChartData = {{ medications_chart_data_|safe }};
-        const regionChartData = regionData[entryData["Diagnosis Name"]];
+        const regionChartData = regionData[diagnosisName];
+        const smoker_data = {{smoker_counts_by_diagnosis_json | safe}};
+        if(smoker_data[diagnosisName]){
+            createsmoking_history(smoker_data[diagnosisName]);
+        }
         if (symptomsData[diagnosisName]) {
             const topSymptoms = symptomsData[diagnosisName].top_symptoms;
             const percentages = symptomsData[diagnosisName].percentage;
@@ -630,20 +597,25 @@
         }
         const bmiHistogramData_diagnosis = bmiHistogramData[diagnosisName];
         const bmi_data = {{ bmi_index| safe}};
-        console.log("bmi_data:", bmi_data);
+        const bmiclass = "{{ bmi_class| safe}}";
         if (bmiHistogramData) {
             const bmiLabels = Object.keys(bmiHistogramData_diagnosis);
             const bmiHistogramChartData = {
                 labels: bmiLabels,
                 histogram_data: bmiLabels.map(label => bmiHistogramData_diagnosis[label]),
             };
+            const bmiIndexData = {
+                label: "your bmi class",
+                data: [bmi_data],
+                backgroundColor: "red",
+                pointRadius: 10,
+            };
 
-            createBMIHistogram(bmiHistogramChartData, bmi_data);
+            createBMIHistogram(bmiHistogramChartData, bmiIndexData, bmiclass);
          }
         const regionSymptomData = {{ region_symptom_data|safe }};
         // Inside your handleButtonClick function:
         if (regionSymptomData[diagnosisName]) {
-            console.log("inside region symptoms")
             const regionSymptomsData = regionSymptomData[diagnosisName];
             createRegionSymptomsChart(regionSymptomsData);
         }
