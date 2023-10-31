@@ -6,7 +6,7 @@
         border: 2px solid black;
         border-radius: 10%;
         width: 400px;
-        height: 280px;
+        height: 300px;
     }
 
     .card-heading {
@@ -30,11 +30,28 @@
         text-decoration: none; /* Remove underline on hover */
     }
 
+    .custom-margin {
+        margin-left: 100px;
+    }
+
+    .custom-margin1 {
+        margin-left: 350px;
+    }
+
+    ul {
+        text-align: left;
+    }
+
     /* Responsive layout for mobile screens */
     @media (max-width: 988px) {
         .rounded-card {
-            width: 350px;
+            width: 320px;
+            height: 350px;
             border-radius: 7%;
+        }
+        .custom-margin,
+        .custom-margin1 {
+            margin-left: 0px;
         }
     }
 </style>
@@ -42,39 +59,57 @@
 <div class="container text-center padding-top">
     <h2 class="about-heading">Select the Platform you want to use</h2>
     <div class="row">
-        <div class="col-md-6 col-sm-12 text-center mb-4">
+        <div class="col-md-5 col-sm-12 text-center mb-4 custom-margin">
             <a class="black-text" href="{{ url_for('patient_form') }}">
-                <div class="rounded-card">
-                    <div class="card-heading">
-                        <img src="{{ url_for('static', filename='images/analytic.png') }}" alt="logo"
-                            style="width: 15%;">
-                        <h5 class="card-title">Evidence Based Clinical <br> Decision Support</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Clinical decision support platform that helps physicians make better
-                            decisions
-                            by identifying similar patient profiles and providing analytics.<br><b>NOTE</b>: It does
-                            this by
-                            using a repository of de-identified patient data.</p>
-                    </div>
+            <div class="rounded-card">
+                <div class="card-heading">
+                    <img src="{{ url_for('static', filename='images/analytic.png') }}" alt="logo" style="width: 15%;">
+                    <h5 class="card-title">Evidence Based Diagnosis</h5>
                 </div>
+                <div class="card-body">
+                    <p class="card-text">Clinical decision support platform that helps general physicians make better
+                        decisions
+                        by identifying similar patient profiles and providing analytics.<br><br><b>NOTE</b>: It does this by
+                        using a repository of de-identified patient data.</p>
+                </div>
+            </div>
             </a>
         </div>
-        <div class="col-md-6 col-sm-12 text-center mb-1">
+        <div class="col-md-5 col-sm-12 text-center mb-4">
             <div class="rounded-card">
-                <a class="black-text" href="{{ url_for('coming_soon') }}">
-                    <div class="card-heading">
-                        <img src="{{ url_for('static', filename='images/data.png') }}" alt="logo" style="width: 10%;">
-                        <h5 class="card-title">Population Analytics</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Provides immediate and compliant access to population data and rigorous
-                            analytics. Helps government organizations, life science research companies, and business
-                            development professionals make informed decisions.<br><b>NOTE</b>: It does this by using a
-                            repository of de-identified patient data.</p>
-                    </div>
-                </a>
+                <a class="black-text" href="{{ url_for('patient_form') }}">
+                <div class="card-heading">
+                    <img src="{{ url_for('static', filename='images/emergency.png') }}" alt="logo" style="width: 13%;">
+                    <h5 class="card-title">Evidence Based Triaging</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">The Triage Platform helps emergency staff make better decisions about patient
+                        care by:
+                    <ul>
+                        <li>Triaging patient</li>
+                        <li>Identifying similar patient profiles</li>
+                        <li>Providing analytics</li>
+                    </ul><b>NOTE</b>: It does this by using a
+                    repository of de-identified patient data.</p>
+                </div>
             </div>
+            </a>
+        </div>
+        <div class="col-md-5 col-sm-12 text-center mb-4 custom-margin1">
+            <div class="rounded-card">
+                <a class="black-text" href="{{ url_for('patient_form') }}">
+                <div class="card-heading">
+                    <img src="{{ url_for('static', filename='images/data.png') }}" alt="logo" style="width: 10%;">
+                    <h5 class="card-title">Evidence Based Analytics</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Provides immediate and compliant access to population data and rigorous
+                        analytics. Helps government organizations, life science research companies, and business
+                        development professionals make informed decisions.<br><br><b>NOTE</b>: It does this by using a
+                        repository of de-identified patient data.</p>
+                </div>
+            </div>
+            </a>
         </div>
     </div>
 </div>

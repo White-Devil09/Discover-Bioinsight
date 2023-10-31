@@ -25,9 +25,8 @@ def coming_soon():
     return " This page is under construction"
 
 @app.route('/patient_form', methods=['POST','GET'])
-def patient_form():
+def patient_form(show_alert=False):
     form = PatientForm()
-    show_alert = session.get('show_alert', False)
     return render_template('patient_form.html',show_alert=show_alert, form=form, show_content=True)
 
 @app.route('/result', methods=['POST','GET'])
@@ -70,7 +69,7 @@ def result():
                                         'hyperlipidemia', 'kidney stones', 'chronic kidney disease', 'angina pectoris', 'hemorrhoids', 'migraine headaches', 'peripheral artery disease', 'gout',
                                         'stroke', 'drug abuse', 'chronic gastritis', 'atrial fibrillation']
     past_medical_history_list = [s for s in past_medical_history_keywords if s in past_medical_history]
-    bmi_index = details.Weight.data / (details.Height.data/100)**2
+    bmi_index = details.Weight.data / ((details.Height.data+1)/100)**2
     family_history_to_match = details.family_history.data
     year_to_filter = details.year.data
     to_year_to_filter = details.to_year.data
@@ -142,9 +141,7 @@ def result():
 
     df = pd.DataFrame(cursor)
     if df.empty:
-        print("hii")
-        session['show_alert'] = True 
-        return redirect(url_for('patient_form'))
+        return patient_form(show_alert=True)
     grouped = df.groupby("Diagnosis Name").size().reset_index(name="patient_count")
     top_5_diagnoses = grouped.sort_values(by="patient_count", ascending=False).head(5)
     top_diagnoses_names = top_5_diagnoses['Diagnosis Name'].tolist()
