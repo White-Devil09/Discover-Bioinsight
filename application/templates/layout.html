@@ -101,7 +101,9 @@
                 </div>
             </div>
             <div class="right">
+                {% if show_content %}
                 <a href="{{ url_for('coming_soon')}}">History</a>
+                {% endif %}
                 <a href="{{ url_for('index') }}">About</a>
                 <a href="{{ url_for('platform') }}">Platform</a>
                 <a href="{{ url_for('contact_us') }}">Contact us!</a>

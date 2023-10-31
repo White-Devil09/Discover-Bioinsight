@@ -51,8 +51,10 @@
         flex-wrap: wrap;
         margin: -5px;
     }
+
     .form-group {
-        margin: 10px 0; /* Spacing change */
+        margin: 10px 0;
+        /* Spacing change */
     }
 
     .btn-submit {
@@ -64,6 +66,12 @@
         cursor: pointer;
     }
 </style>
+
+{% if show_alert %}
+<script>
+    alert("No matches found");
+</script>
+{% endif %}
 
 <div class="container">
     <div class="row">

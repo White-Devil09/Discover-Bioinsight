@@ -1,5 +1,5 @@
 from application import app, db
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, session
 from .forms import PatientForm
 from datetime import datetime
 import pandas as pd
@@ -27,7 +27,8 @@ def coming_soon():
 @app.route('/patient_form', methods=['POST','GET'])
 def patient_form():
     form = PatientForm()
-    return render_template('patient_form.html', form=form)
+    show_alert = session.get('show_alert', False)
+    return render_template('patient_form.html',show_alert=show_alert, form=form, show_content=True)
 
 @app.route('/result', methods=['POST','GET'])
 def result():
@@ -127,6 +128,7 @@ def result():
 
     df = pd.DataFrame(cursor)
     if df.empty:
+        session['show_alert'] = True 
         return redirect(url_for('patient_form'))
     grouped = df.groupby("Diagnosis Name").size().reset_index(name="patient_count")
     top_5_diagnoses = grouped.sort_values(by="patient_count", ascending=False).head(5)
