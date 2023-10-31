@@ -55,6 +55,7 @@
     .heatmap-full-width {
         width: 100%;
         text-align: center;
+        overflow-x: auto;
     }
 
     .smaller-chart {
@@ -67,6 +68,7 @@
         padding-top: 20px;
         margin-right: 10px;
     }
+
 </style>
 <h2 style="text-align: center; font-family:'Times New Roman', Times, serif; font-weight: bold;">Similarity Analysis (out of {{ count }})</h2>
 <table class="table" style="max-width: 1000px; margin: 0 auto; padding-bottom: 30px;">
@@ -91,6 +93,7 @@
     </tbody>
 </table>
 
+<h1 id="diagnosis-heading"></h1>
 <div class="charts-container row">
     <div class="chart-column chart-container">
         <canvas id="symptoms-chart"></canvas>
@@ -101,7 +104,7 @@
     </div>
 <div class="charts-container row">
     <div class="heatmap-full-width chart-container">
-        <div id="heatmap"></div>
+        <div id="heatmap" class="heatmap-chart"></div>
     </div>
 </div>
 <div class="charts-container row">
@@ -181,15 +184,9 @@
                 labels: data.labels,
                 datasets: [
                     {
-                        label: "",
+                        label: "Top 5 most common Past Medical Histories",
                         data: data.data,
-                        backgroundColor: [
-                            "#FF5733",
-                            "#FFC300",
-                            "#C70039",
-                            "#581845",
-                            "#900C3F"
-                        ],
+                        backgroundColor: "rgba(147, 112, 219, 0.6)",
                     },
                 ],
             },
@@ -204,7 +201,7 @@
                     },
                     x: {
                         title: {
-                            display: true,
+                            display: false,
                             text: "Top 5 most common Past Medical Histories",
                         },
                     },
@@ -216,10 +213,22 @@
 
     function createHeatmap(heatmapData) {
         const layout = {
-            xaxis: { title: 'Age Group' },
-            yaxis: { title: 'Symptoms' },
+            xaxis: { 
+                title: 'Age Group',
+                tickfont: {
+                    size: 20,
+                },
+            },
+            yaxis: { 
+                title: 'Symptoms',
+                tickangle: 270,
+                tickfont: {
+                    size: 13,
+                },
+            },
+            title: 'Age Group vs Symptoms',
         };
-
+        heatmapData.colorscale = 'YlOrRd';
         const heatmapContainer = document.getElementById("heatmap");
 
         if (heatmapContainer.data) {
@@ -234,7 +243,6 @@
         if (regionSymptomsChart) {
             regionSymptomsChart.destroy();
         }
-        console.log("data", data);
         const labels = data.top_symptoms;
         const regionData = data.region_data;
         const regionColors = [
@@ -272,23 +280,18 @@
         if (medicationsPieChart) {
             medicationsPieChart.destroy();
         }
+        console.log("data", data)
+        console.log("top_medications:", data.data);
+        console.log("labels:", data.labels);
         medicationsPieChart = new Chart(medicationsCtx, {
             type: "bar",
             data: {
                 labels: data.labels,
                 datasets: [
                     {
-                        label: "Medications",
+                        label: "Top 5 most common Medications",
                         data: data.data,
-                        backgroundColor: [
-                            "#FF5733",
-                            "#FFC300",
-                            "#C70039",
-                            "#581845",
-                            "#900C3F",
-                            "#FFA07A",
-                            "#FF5733"
-                        ],
+                        backgroundColor: "#0CAFFF",
                     },
                 ],
             },
@@ -308,6 +311,12 @@
                         },
                     },
                 },
+                legend: {
+                    display: false,
+                },
+                tooltips: {
+                    enabled: false, // Disable tooltips to prevent the display of color and label
+                },
             },
         });
     }
@@ -322,17 +331,9 @@
                 labels: data.labels,
                 datasets: [
                     {
-                        label: "Family History",
+                        label: "Top 5 most common Family Histories",
                         data: data.data,
-                        backgroundColor: [
-                            "#FF5733",
-                            "#FFC300",
-                            "#C70039",
-                            "#581845",
-                            "#900C3F",
-                            "#FFA07A",
-                            "#FF5733"
-                        ],
+                        backgroundColor: "#99FFFF"
                     },
                 ],
             },
@@ -347,7 +348,7 @@
                     },
                     x: {
                         title: {
-                            display: true,
+                            display: false,
                             text: "Family history",
                         },
                     },
@@ -356,7 +357,7 @@
         });
     }
 
-    function createBMIHistogram(data) {
+    function createBMIHistogram(data, bmi_index) {
         if (bmiHistogramChart) {
             bmiHistogramChart.destroy();
         }
@@ -402,33 +403,53 @@
         if (chart) {
             chart.destroy();
         }
+        const labels = data.labels;
+        const dailyCount = data.daily_count;
+        const neverCount = data.never_count;
+        const occasionallyCount = data.occasionally_count;
+        const quitSmokingCount = data.quit_smoking_count;
+        const dataArray = labels.map((label, index) => ({
+            label,
+            daily_count: dailyCount[index],
+            never_count: neverCount[index],
+            occasionally_count: occasionallyCount[index],
+            quit_smoking_count: quitSmokingCount[index],
+        }));
+        dataArray.sort((a, b) => b.daily_count - a.daily_count);
 
+        // Extract sorted labels and data arrays
+        const sortedLabels = dataArray.map(item => item.label);
+        
+        const sortedDailyCount = dataArray.map(item => item.daily_count);
+        const sortedNeverCount = dataArray.map(item => item.never_count);
+        const sortedOccasionallyCount = dataArray.map(item => item.occasionally_count);
+        const sortedQuitSmokingCount = dataArray.map(item => item.quit_smoking_count);
         chart = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: data.labels,
+                labels: sortedLabels,
                 datasets: [
                     {
                         label: "Daily",
-                        data: data.daily_count,
-                        backgroundColor: "rgba(128, 0, 0, 0.5)",  // Dark red
+                        data: sortedDailyCount,
+                        backgroundColor: "rgba(128, 0, 0, 0.5)",
                     },
                     {
                         label: "Never",
-                        data: data.never_count,
-                        backgroundColor: "rgba(0, 0, 128, 0.5)",  // Dark blue
+                        data: sortedNeverCount,
+                        backgroundColor: "rgba(0, 0, 128, 0.5)",
                     },
                     {
                         label: "Occasionally",
-                        data: data.occasionally_count,
-                        backgroundColor: "rgba(128, 128, 0, 0.5)",  // Dark yellow
+                        data: sortedOccasionallyCount,
+                        backgroundColor: "rgba(128, 128, 0, 0.5)",
                     },
                     {
                         label: "Quit Smoking",
-                        data: data.quit_smoking_count,
-                        backgroundColor: "rgba(0, 128, 128, 0.5)",  // Dark cyan
+                        data: sortedQuitSmokingCount,
+                        backgroundColor: "rgba(0, 128, 128, 0.5)",
                     },
-                ],
+                ]
             },
             options: {
                 plugins: {
@@ -437,6 +458,9 @@
                         text: "Frequency of Smoking Habits",
                         fontsize: 20,
                     },
+                },
+                legend: {
+                    display: false,
                 },
             },
         });
@@ -453,11 +477,19 @@
             data : {
                 labels: labels,
                 datasets: [
-                    {   label: "Patient count by region wise",
+                    {   
+                        labels: "Region wise patients",
                         data: counts,
                         backgroundColor: "rgba(0, 128, 128, 0.5)",
                     },
                 ],
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: "Gender Distribution",
+                    fontsize: 16,
+                },
             },
         });
       
@@ -564,6 +596,7 @@
 
         const bmiHistogramData = {{ bmi_histogram_dict|tojson|safe }};
         const diagnosisName = entryData["Diagnosis Name"];
+        document.getElementById("diagnosis-heading").textContent = `Analytics - ${diagnosisName}`;
         const symptomsData = {{ symptom_data_by_diagnosis|tojson|safe }};
         const regionData = {{ region_counts|tojson|safe }};
         const symptom_data_by_diagnosis_agerange = {{ symptom_data_by_diagnosis_age_range|tojson|safe}}; 
@@ -596,7 +629,8 @@
             createfamily_history(family_history_data[diagnosisName]);
         }
         const bmiHistogramData_diagnosis = bmiHistogramData[diagnosisName];
-
+        const bmi_data = {{ bmi_index| safe}};
+        console.log("bmi_data:", bmi_data);
         if (bmiHistogramData) {
             const bmiLabels = Object.keys(bmiHistogramData_diagnosis);
             const bmiHistogramChartData = {
@@ -604,7 +638,7 @@
                 histogram_data: bmiLabels.map(label => bmiHistogramData_diagnosis[label]),
             };
 
-            createBMIHistogram(bmiHistogramChartData);
+            createBMIHistogram(bmiHistogramChartData, bmi_data);
          }
         const regionSymptomData = {{ region_symptom_data|safe }};
         // Inside your handleButtonClick function:

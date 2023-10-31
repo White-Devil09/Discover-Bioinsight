@@ -1,5 +1,5 @@
 from application import app, db
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 from .forms import PatientForm
 from datetime import datetime
 import pandas as pd
@@ -52,7 +52,7 @@ def result():
     past_medical_history = details.pastmedical_history.data.lower()
     past_medical_history_list = []
     past_medical_history_list.append(past_medical_history)
-
+    bmi_index = details.Weight.data / (details.Height.data/100)**2
     family_history_to_match = details.family_history.data
     year_to_filter = details.year.data
     to_year_to_filter = details.to_year.data
@@ -126,6 +126,8 @@ def result():
     cursor = list(db.patient_collection1.aggregate(pipeline))
 
     df = pd.DataFrame(cursor)
+    if df.empty:
+        return redirect(url_for('patient_form'))
     grouped = df.groupby("Diagnosis Name").size().reset_index(name="patient_count")
     top_5_diagnoses = grouped.sort_values(by="patient_count", ascending=False).head(5)
     top_diagnoses_names = top_5_diagnoses['Diagnosis Name'].tolist()
@@ -271,4 +273,4 @@ def result():
     return render_template('result.html', bmi_histogram_dict=bmi_histogram_dict , result=top_5_diagnoses_dict,time = end_time - start_time,count = total_patients_in_top_5, symptom_data_by_diagnosis=symptom_data_by_diagnosis,
                             region_counts=region_counts,symptom_data_by_diagnosis_age_range=symptom_data_by_diagnosis_age_range,
                             gender_chart = sex_chart_data_json, medications_chart_data_ = medications_chart_data_json,past_medical_history = past_medical_history,
-                            family_history_by_diagnosis_json=family_history_by_diagnosis_json, region_symptom_data = region_symptom_data)
+                            family_history_by_diagnosis_json=family_history_by_diagnosis_json, region_symptom_data = region_symptom_data, bmi_index = bmi_index)
