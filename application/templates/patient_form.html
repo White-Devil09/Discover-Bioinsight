@@ -67,11 +67,7 @@
     }
 </style>
 
-{% if show_alert %}
-<script>
-    alert("No matches found");
-</script>
-{% endif %}
+
 
 <div class="container">
     <div class="row">
@@ -138,6 +134,9 @@
                     </div>
                 </fieldset>
             </form>
+            {% if show_alert %}
+            <p>No record were found that match your patient profile</p>
+            {% endif %}
         </div>
     </div>
 </div>

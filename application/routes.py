@@ -27,7 +27,7 @@ def coming_soon():
 @app.route('/patient_form', methods=['POST','GET'])
 def patient_form():
     form = PatientForm()
-    show_alert = False
+    show_alert = session.get('show_alert', False)
     return render_template('patient_form.html',show_alert=show_alert, form=form, show_content=True)
 
 @app.route('/result', methods=['POST','GET'])
