@@ -255,7 +255,7 @@
         regionSymptomsChart = new Chart(regionSymptomsCtx, {
             type: "bar",
             data: {
-                labels: labels,
+                labels:labels,
                 datasets: regionData.columns.map((column, index) => ({
                     label: regionData.index[index],
                     data: regionData.data[index],
@@ -431,7 +431,7 @@
                     },
                     x: {
                         title: {
-                            display: false,
+                            display: true,
                             text: "Smoking Habits",
                         },
                     },
@@ -445,25 +445,24 @@
         if(regionChart) {
             regionChart.destroy();
         }
-        const labels = Object.keys(data);
-        const counts = Object.values(data);
         regionChart = new Chart(regionCtx,{
             type: "bar",
             data : {
                 labels: data.labels,
                 datasets: [
                     {   
-                        labels: "Region wise patients",
+                        label: "Region wise patients",
                         data: data.data,
                         backgroundColor: "rgba(0, 128, 128, 0.5)",
                     },
                 ],
             },
             options: {
-                title: {
-                    display: true,
-                    text: "Gender Distribution",
-                    fontsize: 16,
+                scales: {
+                    x: {
+                        display: true,
+                        text: "Region wise Distribution"
+                    },
                 },
             },
         });
