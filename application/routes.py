@@ -1,12 +1,21 @@
-from application import app, db
-from flask import render_template, request, redirect, url_for, session
+from application import app
+from flask import render_template, request
 from .forms import PatientForm
 from datetime import datetime
 import pandas as pd
 from collections import defaultdict
 import json
-from collections import Counter
-import re
+import sqlite3
+import ast
+
+def convert_to_list(s):
+    if pd.isna(s) or s == '[]' or s == '':
+        return []  # Return an empty list
+    else:
+        try:
+            return ast.literal_eval(s)  # Convert the string to a list
+        except (SyntaxError, ValueError):
+            return [s]
 
 @app.route('/')
 def index():
@@ -73,79 +82,57 @@ def result():
     family_history_to_match = details.family_history.data
     year_to_filter = details.year.data
     to_year_to_filter = details.to_year.data
-    query = {
-        "$and": [
-            {
-                "Final Diagnosis Date": {
-                    "$gte": year_to_filter,
-                    "$lte": to_year_to_filter
-                }
-            },
-            {
-                "$or": [
-                    {
-                        "Symptoms": {
-                            "$elemMatch": {
-                                "$in": symptoms_to_search
-                            }
-                        }
-                    },
-                    {
-                        "Medications": {
-                            "$elemMatch": {
-                                "$in": medications_to_search
-                            }
-                        }
-                    },
-                    {
-                        "Family History": {
-                            "$in": family_history_list
-                        }
-                    },
-                    {
-                        "Past Medical History": {
-                            "$in": past_medical_history_list
-                        }
-                    }
-                ]
-            }
-        ]
-    }
 
-    pipeline = [
-        {
-            "$match": query
-        },
-        {
-            "$group": {
-                "_id": "$Diagnosis Name",
-                "count": { "$sum": 1 },
-                "data": { "$push": "$$ROOT" }
-            }
-        },
-        {
-            "$sort": {"count": -1}
-        },
-        {
-            "$limit": 5
-        },
-        {
-            "$unwind" : "$data"
-        },
-        {
-            "$replaceRoot": { "newRoot": "$data" }
-        }
-    ]
+    if not symptoms_to_search:
+        symptoms_to_search = ['default']
+    if not medications_to_search:
+        medications_to_search = ['default']
+    if not family_history_list:
+        family_history_list = ['default']
+    if not past_medical_history_list:
+        past_medical_history_list = ['default']
+
+
+    symptom_params = ['%' + symptom + '%' for symptom in symptoms_to_search]
+    medication_params = ['%' + medication + '%' for medication in medications_to_search]
+    family_history_params = ['%' + family_history + '%' for family_history in family_history_list]
+    past_medical_history_params = ['%' + past_medical_history + '%' for past_medical_history in past_medical_history_list]
+    conn = sqlite3.connect('database_exp.db')
+    cursor = conn.cursor()
+    sql_query = f'''
+    SELECT * FROM patient_data
+    WHERE (
+        {(' OR '.join(["Symptoms LIKE ?" for _ in symptoms_to_search]) if symptoms_to_search else '1=1')}
+        OR {(' OR '.join(["Medications LIKE ?" for _ in medications_to_search]) if medications_to_search else '1=1')}
+        OR {(' OR '.join(["PastMedicalHistory LIKE ?" for _ in past_medical_history_list]) if past_medical_history_list else '1=1')}
+        OR {(' OR '.join(["FamilyHistory LIKE ?" for _ in family_history_list]) if family_history_list else '1=1')}
+    )
+    AND "FinalDiagnosisDate" BETWEEN ? AND ?
+    '''
+    params = symptom_params + medication_params + family_history_params+past_medical_history_params+[year_to_filter, to_year_to_filter]
     start_time = datetime.now()
-    cursor = list(db.patient_collection1.aggregate(pipeline))
+    cursor.execute(sql_query, params)
+    results = cursor.fetchall()
+    df = pd.DataFrame(results, columns=[desc[0] for desc in cursor.description])
 
-    df = pd.DataFrame(cursor)
     if df.empty:
         return patient_form(show_alert=True)
+    
+    column_name_mapping = {
+        'RegionOfOrigin': 'Region Of Origin',
+        'PastMedicalHistory': 'Past Medical History',
+        'FamilyHistory': 'Family History',
+        'FinalDiagnosisDate' : 'Final Diagnosis Date',
+        'DiagnosisName':'Diagnosis Name',
+        'BMIIndex':'BMI Index',
+    }
+    df = df.rename(columns=column_name_mapping)
+
     grouped = df.groupby("Diagnosis Name").size().reset_index(name="patient_count")
     top_5_diagnoses = grouped.sort_values(by="patient_count", ascending=False).head(5)
     top_diagnoses_names = top_5_diagnoses['Diagnosis Name'].tolist()
 
+    df = df[df['Diagnosis Name'].isin(top_diagnoses_names)]
 
     total_patients_in_top_5 = 0
     total_patients_in_top_5 = top_5_diagnoses["patient_count"].sum()
@@ -154,7 +141,8 @@ def result():
 
 
     # smoker_calculation
-
+    df['Symptoms'] = df['Symptoms'].apply(lambda x: ast.literal_eval(x))
+    df['Medications'] = df['Medications'].apply(convert_to_list)
 
     symptom_data_by_diagnosis = {}
     medication_data_by_diagnosis = {}
