@@ -1,15 +1,21 @@
 {% extends "layout.html" %}
 {% block content %}
-<p style="font-size: 22px; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight:500;"> Out of 50,000 deidentified patient records, {{ count }} unique patient records <br> were found who had similar clinical profile as your patient.</p>
-<p style="font-size: 22px; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight:500;"> <b> NOTE FOR THE DOCTOR:</b> These analytics are to support you (the doctor) in making a clinical decision. Discover BioInsights is NOT a diagnostic tool.</p>
-<p style="font-size: 20px; text-align: left; font-family: 'Times New Roman', Times, serif;">Time taken to fetch matching patient records: {{ time.total_seconds() }} seconds</p>
+<p style="font-size: 22px; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight:500;"> Out of
+    50,000 deidentified patient records, {{ count }} unique patient records <br> were found who had similar clinical
+    profile as your patient.</p>
+<p style="font-size: 22px; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight:500;"> <b> NOTE
+        FOR THE DOCTOR:</b> These analytics are to support you (the doctor) in making a clinical decision. Discover
+    BioInsights is NOT a diagnostic tool.</p>
+<p style="font-size: 20px; text-align: left; font-family: 'Times New Roman', Times, serif;">Time taken to fetch matching
+    patient records: {{ time.total_seconds() }} seconds</p>
 
 <style>
     table {
         font-size: 20px;
     }
 
-    th, td {
+    th,
+    td {
         border: 1px solid #dddddd;
         text-align: left;
         padding: 8px;
@@ -37,9 +43,11 @@
     }
 
     #bmi-histogram-chart {
-         /* Background color for the chart container */
-        border-radius: 8px; /* Rounded corners for the chart container */
+        /* Background color for the chart container */
+        border-radius: 8px;
+        /* Rounded corners for the chart container */
     }
+
     .charts-container.row {
         display: flex;
         flex-wrap: wrap;
@@ -49,7 +57,8 @@
     .charts-container.row .chart-column {
         flex: 1;
         padding-top: 20px;
-        margin-right: 10px; /* Adjust the margin as needed */
+        margin-right: 10px;
+        /* Adjust the margin as needed */
     }
 
     .heatmap-full-width {
@@ -59,18 +68,21 @@
     }
 
     .smaller-chart {
-        flex-basis: 40%; /* Adjust the width as needed */
+        flex-basis: 40%;
+        /* Adjust the width as needed */
         max-width: 400px;
-        text-align: center; /* Adjust the max width as needed */
+        text-align: center;
+        /* Adjust the max width as needed */
     }
+
     .row .chart-column {
         flex: 1;
         padding-top: 20px;
         margin-right: 10px;
     }
-
 </style>
-<h2 style="text-align: center; font-family:'Times New Roman', Times, serif; font-weight: bold;">Similarity Analysis (out of {{ count }})</h2>
+<h2 style="text-align: center; font-family:'Times New Roman', Times, serif; font-weight: bold;">Similarity Analysis (out
+    of {{ count }})</h2>
 <table class="table" style="max-width: 1000px; margin: 0 auto; padding-bottom: 30px;">
     <thead>
         <tr>
@@ -83,8 +95,8 @@
         {% for entry in result %}
         <tr>
             <td><a href="javascript:void(0)" class="myButton" data-entry="{{ entry }}"
-                heat-entry='{{ symptom_data_by_diagnosis_age_range[entry['Diagnosis Name']] | tojson }}'>
-                {{ entry['Diagnosis Name'] }}</a>
+                    heat-entry='{{ symptom_data_by_diagnosis_age_range[entry['Diagnosis Name']] | tojson }}'>
+                    {{ entry['Diagnosis Name'] }}</a>
             </td>
             <td>{{ entry["patient_count"] }}</td>
             <td>{{ entry["percentage"] }}%</td>
@@ -99,9 +111,9 @@
         <canvas id="symptoms-chart"></canvas>
         <canvas id="region-symptoms-chart" style="display: none;"></canvas>
         <button id="toggle-button">Toggle Symptoms</button>
-    </div> 
-    
     </div>
+
+</div>
 <div class="charts-container row">
     <div class="heatmap-full-width chart-container">
         <div id="heatmap" class="heatmap-chart"></div>
@@ -110,14 +122,14 @@
 <div class="charts-container row">
     <div class="chart-column chart-container">
         <canvas id="region-chart"></canvas>
-    </div>  
+    </div>
     <div class="chart-column chart-container">
         <canvas id="family-history-chart"></canvas>
     </div>
-   
+
 </div>
-<div id="chart-container row" >
-    <div class = "chart-column chart-container">
+<div id="chart-container row">
+    <div class="chart-column chart-container">
         <canvas id="past-medical-chart"></canvas>
     </div>
     <div class="chart-column chart-container">
@@ -125,7 +137,7 @@
     </div>
 </div>
 
-<div class="charts-container row" >
+<div class="charts-container row">
     <div class="chart-column chart-container">
         <canvas id="bmi-histogram-chart"></canvas>
     </div>
@@ -155,7 +167,7 @@
     let bmiHistogramChart = null;
     let chart = null;
     let symptomsChart = null;
-    let regionChart = null; 
+    let regionChart = null;
     let heatmapChart = null;
     const sexCanvas = document.getElementById("sex-pie-chart");
     const sexCtx = sexCanvas.getContext("2d");
@@ -175,7 +187,7 @@
 
 
     function createpastmedicalmap(data) {
-        if(pastMedicalchart) {
+        if (pastMedicalchart) {
             pastMedicalchart.destroy();
         }
         pastMedicalchart = new Chart(pastMedicalCTx, {
@@ -213,13 +225,13 @@
 
     function createHeatmap(heatmapData) {
         const layout = {
-            xaxis: { 
+            xaxis: {
                 title: 'Age Group',
                 tickfont: {
                     size: 20,
                 },
             },
-            yaxis: { 
+            yaxis: {
                 title: 'Symptoms',
                 tickangle: 270,
                 tickfont: {
@@ -239,7 +251,7 @@
     }
 
     function createRegionSymptomsChart(data) {
-    // Ensure the existing region-symptoms-chart is destroyed if it exists
+        // Ensure the existing region-symptoms-chart is destroyed if it exists
         if (regionSymptomsChart) {
             regionSymptomsChart.destroy();
         }
@@ -255,12 +267,12 @@
         regionSymptomsChart = new Chart(regionSymptomsCtx, {
             type: "bar",
             data: {
-                labels:labels,
+                labels: labels,
                 datasets: regionData.columns.map((column, index) => ({
                     label: regionData.index[index],
                     data: regionData.data[index],
                     backgroundColor: regionColors[index],
-            })),
+                })),
             },
             options: {
                 scales: {
@@ -441,16 +453,16 @@
     }
 
 
-    function createRegionChart(data){
-        if(regionChart) {
+    function createRegionChart(data) {
+        if (regionChart) {
             regionChart.destroy();
         }
-        regionChart = new Chart(regionCtx,{
+        regionChart = new Chart(regionCtx, {
             type: "bar",
-            data : {
+            data: {
                 labels: data.labels,
                 datasets: [
-                    {   
+                    {
                         label: "Region wise patients",
                         data: data.data,
                         backgroundColor: "rgba(0, 128, 128, 0.5)",
@@ -466,7 +478,7 @@
                 },
             },
         });
-      
+
     }
 
     function createSexPieChart(data) {
@@ -526,103 +538,110 @@
         });
     }
 
-    
+
     // Function to handle button click
     function handleButtonClick(event) {
         const clickedButton = event.target;
         const entryData = JSON.parse(clickedButton.getAttribute("data-entry").split("'").join('"'));
         const heatData = JSON.parse(clickedButton.getAttribute("heat-entry"));
-        const newdata = Object.values(heatData);
-        const keys = Object.keys(newdata[1]);
-        if (family_historychart) {
-            family_historychart.destroy();
-        }
-        const valuesByKeys = {};
-        keys.forEach(key => {
-            valuesByKeys[key] = [];
-        });
+        console.log(heatData);
+        console.log(Object.keys(heatData).length);
 
-        for (const key in newdata) {
-            keys.forEach(keyName => {
-                valuesByKeys[keyName].push(newdata[key][keyName]);
+        if (Object.keys(heatData).length !== 0) {
+            const newdata = Object.values(heatData);
+            const keys = Object.keys(newdata[1]);
+            if (family_historychart) {
+                family_historychart.destroy();
+            }
+            const valuesByKeys = {};
+            keys.forEach(key => {
+                valuesByKeys[key] = [];
             });
-        }
-        const heatmapData = {
-            x: Object.keys(heatData),
-            y: keys,
-            z: keys.map(key => valuesByKeys[key]),
-            type: 'heatmap',
-            colorscale: 'Viridis',
-        }
-        createHeatmap(heatmapData);
 
-        const bmiHistogramData = {{ bmi_histogram_dict|tojson|safe }};
-        const diagnosisName = entryData["Diagnosis Name"];
-        document.getElementById("diagnosis-heading").textContent = `Analytics - ${diagnosisName}`;
-        const symptomsData = {{ symptom_data_by_diagnosis|tojson|safe }};
-        const regionData = {{ region_counts_json|safe }};
-        const symptom_data_by_diagnosis_agerange = {{ symptom_data_by_diagnosis_age_range|tojson|safe}}; 
-        const medicationsChartData = {{ medications_chart_data_|safe }};
-        const regionChartData = regionData[diagnosisName];
-        const smoker_data = {{smoker_counts_by_diagnosis_json | safe}};
-        if(smoker_data[diagnosisName]){
-            createsmoking_history(smoker_data[diagnosisName]);
-        }
-        if (symptomsData[diagnosisName]) {
-            const topSymptoms = symptomsData[diagnosisName].top_symptoms;
-            const percentages = symptomsData[diagnosisName].percentage;
-            const symptomsChartData = {
-                labels: topSymptoms,
-                percentages: percentages,
-            };
 
-            createSymptomsChart(symptomsChartData);
-        }
-        if(regionChartData){
-            createRegionChart(regionChartData);
-        }
-        const sexChartData = {{ gender_chart|safe }};
-        if (sexChartData[diagnosisName]) {
-            createSexPieChart(sexChartData[diagnosisName]);
+            for (const key in newdata) {
+                keys.forEach(keyName => {
+                    valuesByKeys[keyName].push(newdata[key][keyName]);
+                });
+            }
+            const heatmapData = {
+                x: Object.keys(heatData),
+                y: keys,
+                z: keys.map(key => valuesByKeys[key]),
+                type: 'heatmap',
+                colorscale: 'Viridis',
+            }
+            createHeatmap(heatmapData);
         }
 
-        if (medicationsChartData[diagnosisName]) {
-            createMedicationsPieChart(medicationsChartData[diagnosisName]);
-        }
+        const bmiHistogramData = {{ bmi_histogram_dict| tojson | safe
+    }};
+    const diagnosisName = entryData["Diagnosis Name"];
+    document.getElementById("diagnosis-heading").textContent = `Analytics - ${diagnosisName}`;
+    const symptomsData = {{ symptom_data_by_diagnosis| tojson | safe }};
+    const regionData = {{ region_counts_json| safe }};
+    const symptom_data_by_diagnosis_agerange = {{ symptom_data_by_diagnosis_age_range| tojson | safe}};
+    const medicationsChartData = {{ medications_chart_data_| safe }};
+    const regionChartData = regionData[diagnosisName];
+    const smoker_data = {{ smoker_counts_by_diagnosis_json | safe}};
+    if (smoker_data[diagnosisName]) {
+        createsmoking_history(smoker_data[diagnosisName]);
+    }
+    if (symptomsData[diagnosisName]) {
+        const topSymptoms = symptomsData[diagnosisName].top_symptoms;
+        const percentages = symptomsData[diagnosisName].percentage;
+        const symptomsChartData = {
+            labels: topSymptoms,
+            percentages: percentages,
+        };
 
-        const family_history_data = {{ family_history_by_diagnosis_json | safe}};
-        if(family_history_data[diagnosisName]){
-            createfamily_history(family_history_data[diagnosisName]);
-        }
-        const bmiHistogramData_diagnosis = bmiHistogramData[diagnosisName];
-        const bmi_data = {{ bmi_index| safe}};
-        const bmiclass = "{{ bmi_class| safe}}";
-        if (bmiHistogramData) {
-            const bmiLabels = Object.keys(bmiHistogramData_diagnosis);
-            const bmiHistogramChartData = {
-                labels: bmiLabels,
-                histogram_data: bmiLabels.map(label => bmiHistogramData_diagnosis[label]),
-            };
-            const bmiIndexData = {
-                label: "your bmi class",
-                data: [bmi_data],
-                backgroundColor: "red",
-                pointRadius: 10,
-            };
+        createSymptomsChart(symptomsChartData);
+    }
+    if (regionChartData) {
+        createRegionChart(regionChartData);
+    }
+    const sexChartData = {{ gender_chart| safe }};
+    if (sexChartData[diagnosisName]) {
+        createSexPieChart(sexChartData[diagnosisName]);
+    }
 
-            createBMIHistogram(bmiHistogramChartData, bmiIndexData, bmiclass);
-         }
-        const regionSymptomData = {{ region_symptom_data|safe }};
-        // Inside your handleButtonClick function:
-        if (regionSymptomData[diagnosisName]) {
-            const regionSymptomsData = regionSymptomData[diagnosisName];
-            createRegionSymptomsChart(regionSymptomsData);
-        }
-        const pastmedicaldata = {{ past_medical_history | safe}};
-        createpastmedicalmap(pastmedicaldata[diagnosisName]);
+    if (medicationsChartData[diagnosisName]) {
+        createMedicationsPieChart(medicationsChartData[diagnosisName]);
+    }
+
+    const family_history_data = {{ family_history_by_diagnosis_json | safe}};
+    if (family_history_data[diagnosisName]) {
+        createfamily_history(family_history_data[diagnosisName]);
+    }
+    const bmiHistogramData_diagnosis = bmiHistogramData[diagnosisName];
+    const bmi_data = {{ bmi_index| safe}};
+    const bmiclass = "{{ bmi_class| safe}}";
+    if (bmiHistogramData) {
+        const bmiLabels = Object.keys(bmiHistogramData_diagnosis);
+        const bmiHistogramChartData = {
+            labels: bmiLabels,
+            histogram_data: bmiLabels.map(label => bmiHistogramData_diagnosis[label]),
+        };
+        const bmiIndexData = {
+            label: "your bmi class",
+            data: [bmi_data],
+            backgroundColor: "red",
+            pointRadius: 10,
+        };
+
+        createBMIHistogram(bmiHistogramChartData, bmiIndexData, bmiclass);
+    }
+    const regionSymptomData = {{ region_symptom_data| safe }};
+    // Inside your handleButtonClick function:
+    if (regionSymptomData[diagnosisName]) {
+        const regionSymptomsData = regionSymptomData[diagnosisName];
+        createRegionSymptomsChart(regionSymptomsData);
+    }
+    const pastmedicaldata = {{ past_medical_history | safe}};
+    createpastmedicalmap(pastmedicaldata[diagnosisName]);
         
     }
-       
+
 
     const buttons = document.querySelectorAll(".myButton");
 
@@ -633,17 +652,17 @@
 
 <script>
     document.getElementById('toggle-button').addEventListener('click', function () {
-    const firstCanvas = document.getElementById('symptoms-chart');
-    const secondCanvas = document.getElementById('region-symptoms-chart');
+        const firstCanvas = document.getElementById('symptoms-chart');
+        const secondCanvas = document.getElementById('region-symptoms-chart');
 
-    if (firstCanvas.style.display === 'none') {
-        firstCanvas.style.display = 'block';
-        secondCanvas.style.display = 'none';
-    } else {
-        firstCanvas.style.display = 'none';
-        secondCanvas.style.display = 'block';
-    }
-});
+        if (firstCanvas.style.display === 'none') {
+            firstCanvas.style.display = 'block';
+            secondCanvas.style.display = 'none';
+        } else {
+            firstCanvas.style.display = 'none';
+            secondCanvas.style.display = 'block';
+        }
+    });
 
 </script>
 {% endblock %}
