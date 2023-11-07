@@ -10,31 +10,30 @@
 
     .about-text {
         flex: 1;
-        padding-left: 60px;
-        padding-right: 60px;
+        /* padding-left: 60px;
+        padding-right: 60px; */
 
     }
 
     .about-text p {
-        font-size: 20px;
-        font-weight: 500;
+        font-size: 18px;
+        /* font-weight: 500; */
     }
 
     .about-image {
+        color: #0853a3;
+        font-weight: bold;
+        font-size: 44px;
+        padding-right: 40px;
+        padding-left: 40px;
         text-align: center;
         font: 20px;
-        font-weight: bold;
-    }
-
-    .about-image img {
-        max-width: 100%;
-        height: auto;
     }
 
     .about-text p,
     .about-text ul {
         margin: 0;
-        padding: 0;
+        /* padding: 0; */
     }
 
     /* Center the "About Us" heading and make it bold */
@@ -65,7 +64,7 @@
         margin-left: 350px;
     }
 
-    ul {
+    ol {
         text-align: left;
     }
 
@@ -84,7 +83,7 @@
         .about-text p,
         .about-text ul {
             margin: 10px;
-            padding: 0px;
+            /* padding: 10px; */
         }
 
         .rounded-card {
@@ -97,97 +96,82 @@
         .custom-margin1 {
             margin-left: 0px;
         }
+
+        ol {
+            text-align: left;
+        }
+
+        .rev {
+            flex-direction: column-reverse;
+        }
     }
 </style>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
 <div class="abt">
-    <h2 class="about-heading">About Us</h2>
     <div class="about-container">
         <div class="about-image">
-            <img src="{{ url_for('static', filename='images/image.png') }}" alt="About Image">
-            <p>Discover Bioinsights</p>
+            THE <br> CHALLENGE
         </div>
         <div class="about-text">
-            <p>
-                Discover BioInsights is a digital health company building a clinical decision support (CDS) platform to
-                improve patient diagnosis and the quality of care. Our CDS platform will enable doctors, researchers,
-                and life science and diagnostics companies to:
+            <p>Doctors frequently encounter challenges from the absence of clear guidelines for every clinical scenario.
+                This challenge is multiplied when doctors must treat patients with multiple comorbidities.</p>
+            <p><br> On an average
             <ul>
-                <li>Better diagnose patients</li>
-                <li>Perform population analytics using real-world evidence</li>
+                <li>Three out of ten times, doctors are unsure of a diagnosis based on symptoms alone, leading to
+                    referrals to specialists and additional tests.</li>
+                <li>Research shows that only about 20% of patients are linked to a standard care guidelines and only 4%
+                    are backed by high-quality evidence.</li>
             </ul>
             </p>
-            <br>
-            <p>
-                Our platform revolutionizes healthcare by:
-            <ul>
-                <li>Reducing treatment disparities</li>
-                <li>Lowering costs</li>
-                <li>Improving patient trust in doctors</li>
-            </ul>
-            </p>
+            <p><br>This predicament necessitates an approach that relies on intution when treating patients. There is a
+                risk of misdiagnosis and a high chance of prescribing the wrong care pathway for the patient.</p>
         </div>
     </div>
 </div>
 
-<div class="container">
-    <h2 class="about-heading">Products</h2>
-    <div class="row">
-        <div class="col-md-5 col-sm-12 text-center mb-4 custom-margin">
-            <div class="rounded-card">
-                <div class="card-heading">
-                    <img src="{{ url_for('static', filename='images/analytic.png') }}" alt="logo" style="width: 15%;">
-                    <h5 class="card-title">Evidence Based Diagnosis</h5>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Clinical decision support platform that helps general physicians make better
-                        decisions
-                        by identifying similar patient profiles and providing analytics.<br><br><b>NOTE</b>: It does this by
-                        using a repository of de-identified patient data.</p>
-                </div>
-            </div>
+<div style="border-bottom:5px solid #0853a3; width: 75%;"></div>
+
+<div class="abt">
+    <div class="about-container rev">
+        <div class="about-text">
+            <p>A patient had thyroid surgery and since then, suffered from post surgery complications with chest pain,
+                dizziness and inflammation. The patient is not able to drive, walk or sit/stand for a long time. The
+                doctor is unable to come to a conclusion about the diagnosis.</p>
         </div>
-        <div class="col-md-5 col-sm-12 text-center mb-4">
-            <div class="rounded-card">
-                <div class="card-heading">
-                    <img src="{{ url_for('static', filename='images/emergency.png') }}" alt="logo" style="width: 13%;">
-                    <h5 class="card-title">Evidence Based Triaging</h5>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">The Triage Platform helps emergency staff make better decisions about patient
-                        care by:
-                    <ul>
-                        <li>Triaging patient</li>
-                        <li>Identifying similar patient profiles</li>
-                        <li>Providing analytics</li>
-                    </ul><b>NOTE</b>: It does this by using a
-                    repository of de-identified patient data.</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5 col-sm-12 text-center mb-4 custom-margin1">
-            <div class="rounded-card">
-                <div class="card-heading">
-                    <img src="{{ url_for('static', filename='images/data.png') }}" alt="logo" style="width: 10%;">
-                    <h5 class="card-title">Evidence Based Analytics</h5>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Provides immediate and compliant access to population data and rigorous
-                        analytics. Helps government organizations, life science research companies, and business
-                        development professionals make informed decisions.<br><br><b>NOTE</b>: It does this by using a
-                        repository of de-identified patient data.</p>
-                </div>
-            </div>
+        <div class="about-image">
+            REAL WORLD <br> SCENARIO
         </div>
     </div>
 </div>
 
+<div />
+<div style="border-bottom:5px solid #0853a3; width: 75%;margin-left: 25%;"></div>
+
+<div class="abt">
+    <div class="about-container">
+        <div class="about-image">
+            ABOUT THE <br> COMPANY
+        </div>
+        <div class="about-text">
+            <p>Discover Bioinsights is a digital health company that builds clinical Decision Support platform which
+                solves these real world clinical problems and help doctors make better decisions. The platform uses real
+                world deidentified patient data for similarity analysis and clinical insights.</p>
+            <p> Our platform revolutionizes healthcare by:
+            <ol>
+                <li>Reducing treatment disparities.</li>
+                <li>Lowering costs.</li>
+                <li>Improving patient trust in doctors.</li>
+            </ol>
+            </p>
+        </div>
+    </div>
+</div>
 <div style="display: flex; justify-content: center; align-items: center; height: 10vh; margin: 0;">
     <div>
         <button
-            style="background-color: #007BFF; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; font-size: 16px;">
-            <a href="{{ url_for('platform') }}" style="text-decoration: none; color: #fff;">Getting Started</a>
+            style="background-color: #0853a3; color: #fff; border: none; padding: 10px 20px; border-radius: 25px; font-size: 16px; font-weight: bold;">
+            <a href="{{ url_for('platform') }}" style="text-decoration: none; color: #fff;">Try out our plarform</a>
         </button>
     </div>
 </div>
