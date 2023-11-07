@@ -9,7 +9,8 @@
     }
 
     .col-md-6 {
-        flex: 0 0 100%; /* Change to full width on smaller screens */
+        flex: 0 0 100%;
+        /* Change to full width on smaller screens */
         max-width: 100%;
         padding: 10px;
     }
@@ -17,6 +18,19 @@
     .form-control {
         font-size: 18px;
         box-shadow: 3px 3px 5px #888888;
+    }
+
+    .btn-toggle {
+        font-size: 15px;
+        color: #fff;
+        background-color: #007bff;
+        width: 50px;
+        height: 20px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        text-align: center;
+        justify-content: center;
     }
 
     .card {
@@ -62,10 +76,23 @@
         cursor: pointer;
     }
 
+    .wt-ht {
+        display: flex;
+        align-items: center;
+        /* Vertical center alignment */
+    }
+
+    .form-group label,
+    .form-group .form-control {
+        margin-right: 10px;
+        /* Adjust the spacing as needed */
+    }
+
     /* Add media queries for responsive design */
     @media (min-width: 768px) {
         .col-md-6 {
-            flex: 0 0 50%; /* Back to 50% width on larger screens */
+            flex: 0 0 50%;
+            /* Back to 50% width on larger screens */
         }
     }
 </style>
@@ -100,25 +127,28 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 left_space" >
+                        <div class="col-md-6 left_space">
                             <div class="card text-black">
                                 <div>
                                     <div class="blue-title">
                                         <h4 class="card-title text-left mb-0">BMI Index</h4>
                                     </div>
-                                    <div class="form-group">
-                                        {{ form.Weight.label }}
-                                        {{ form.Weight(class="form-control") }}
+                                    <div class="form-group wt-ht">
+                                        <label> {{ form.Weight.label }} </label>
+                                        <div style="width: 70px;">{{ form.weight_units(class="btn-toggle") }}</div>
                                     </div>
-                                    <div class="form-group">
-                                        {{ form.Height.label }}
-                                        {{ form.Height(class="form-control") }}
+                                    <div style="display: block;">{{ form.Weight(class="form-control") }}</div>
+                                    <div class="form-group wt-ht">
+                                        <label> {{ form.Height.label }}</label>
+                                        <div style="width: 70px;">{{ form.Height_units(class="btn-toggle") }}</div>
+
                                     </div>
+                                    <div style="display: block;"> {{ form.Height(class="form-control") }}</div>
                                     <br>
                                     <div class="blue-title">
                                         <h5 class="card-title text-left mb-0">Date and Time Frame</h5>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group ">
                                         {{ form.year.label }}
                                         {{ form.year(class="form-control") }}
                                     </div>

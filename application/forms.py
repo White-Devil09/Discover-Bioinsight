@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, SubmitField, TextAreaField, SelectField, DecimalField
+from wtforms import IntegerField, SubmitField, TextAreaField, SelectField, FloatField
 from wtforms.validators import DataRequired
 
 class PatientForm(FlaskForm):
@@ -7,8 +7,10 @@ class PatientForm(FlaskForm):
     gender = SelectField("Gender",choices=[("Male","Male"),("Female","Female"),("Other","Other")],default="Male",validators=[DataRequired()])
     region_of_origin = SelectField("Region of Origin",choices=[("North","North"),("South","South"),("East","East"),("West","West")],default="North",validators=[DataRequired()])
     cholestrol = IntegerField('Cholestrol', validators=[DataRequired()])
-    Weight = IntegerField('Weight (kgs)', validators=[DataRequired()])
-    Height = DecimalField('Height (cms)', validators=[DataRequired()])
+    Weight = FloatField('Weight', validators=[DataRequired()])
+    weight_units = SelectField("Weight Units",choices=[("kgs","kgs"),("lbs","lbs")],default="kgs",validators=[DataRequired()])
+    Height = FloatField('Height', validators=[DataRequired()])
+    Height_units = SelectField("Height Units",choices=[("cms","cms"),("feets","feets")],default="cms",validators=[DataRequired()])
     symptoms = TextAreaField('Symptoms',default="NA", validators=[DataRequired()])
     medication = TextAreaField('Medication',default="NA", validators=[DataRequired()])
     pastmedical_history = TextAreaField('Past Medical History',default="NA", validators=[DataRequired()])

@@ -78,7 +78,14 @@ def result():
                                         'hyperlipidemia', 'kidney stones', 'chronic kidney disease', 'angina pectoris', 'hemorrhoids', 'migraine headaches', 'peripheral artery disease', 'gout',
                                         'stroke', 'drug abuse', 'chronic gastritis', 'atrial fibrillation']
     past_medical_history_list = [s for s in past_medical_history_keywords if s in past_medical_history]
-    bmi_index = details.Weight.data / ((details.Height.data+1)/100)**2
+    weight = details.Weight.data
+    height = details.Height.data * float(1)
+    if details.weight_units.data == 'lbs':
+        weight = weight / 2.205
+    if details.Height_units.data == 'feets':
+        height = height * 30.48
+
+    bmi_index = weight / ((height+1)/100)**2
     family_history_to_match = details.family_history.data
     year_to_filter = details.year.data
     to_year_to_filter = details.to_year.data
