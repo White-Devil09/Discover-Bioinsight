@@ -13,6 +13,10 @@
     table {
         font-size: 20px;
     }
+    h5 {
+        margin-top: 10px; /* Adjust as needed for spacing */
+        text-align: left;
+    }
 
     th,
     td {
@@ -68,9 +72,9 @@
     }
 
     .smaller-chart {
-        flex-basis: 40%;
-        /* Adjust the width as needed */
-        max-width: 400px;
+        width: 200px;
+        max-height: 450px;
+        max-width: none;
         text-align: center;
         /* Adjust the max width as needed */
     }
@@ -81,44 +85,54 @@
         margin-right: 10px;
     }
 </style>
-<h2 style="text-align: center; font-family:'Times New Roman', Times, serif; font-weight: bold;">Similarity Analysis (out
-    of {{ count }})</h2>
-<table class="table" style="max-width: 1000px; margin: 0 auto; padding-bottom: 30px;">
-    <thead>
-        <tr>
-            <th>Diagnosis Name</th>
-            <th>Patient Count</th>
-            <th>Percentage</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in result %}
-        <tr>
-            <td><a href="javascript:void(0)" class="myButton" data-entry="{{ entry }}"
-                    heat-entry='{{ symptom_data_by_diagnosis_age_range[entry['Diagnosis Name']] | tojson }}'>
-                    {{ entry['Diagnosis Name'] }}</a>
-            </td>
-            <td>{{ entry["patient_count"] }}</td>
-            <td>{{ entry["percentage"] }}%</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
+<div class="container">
+    <h2 style="text-align: center; font-family:'Times New Roman', Times, serif; font-weight: bold;">Similarity Analysis (out
+        of {{ count }})</h2>
+    <table class="table" style="max-width: 1000px; margin: 0 auto; padding-bottom: 30px;">
+        <thead>
+            <tr>
+                <th>Diagnosis Name</th>
+                <th>Patient Count</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in result %}
+            <tr>
+                <td><a href="javascript:void(0)" class="myButton" data-entry="{{ entry }}"
+                        heat-entry='{{ symptom_data_by_diagnosis_age_range[entry['Diagnosis Name']] | tojson }}'>
+                        {{ entry['Diagnosis Name'] }}</a>
+                </td>
+                <td>{{ entry["patient_count"] }}</td>
+                <td>{{ entry["percentage"] }}%</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h5>Note* Click on the diagnosis names to produce analytics for respective Diagnosis Name</h5>
+</div>
+<br>
+<br>
 <h1 id="diagnosis-heading"></h1>
 <div class="charts-container row">
     <div class="chart-column chart-container">
         <canvas id="symptoms-chart"></canvas>
         <canvas id="region-symptoms-chart" style="display: none;"></canvas>
-        <button id="toggle-button">Toggle Symptoms</button>
+        <button id="toggle-button">Region wise view</button>
     </div>
-
+    <div class="chart-column chart-container">
+        <canvas id="past-medical-chart"></canvas>
+    </div>
 </div>
+
+
 <div class="charts-container row">
     <div class="heatmap-full-width chart-container">
         <div id="heatmap" class="heatmap-chart"></div>
     </div>
 </div>
+
+
 <div class="charts-container row">
     <div class="chart-column chart-container">
         <canvas id="region-chart"></canvas>
@@ -126,14 +140,16 @@
     <div class="chart-column chart-container">
         <canvas id="family-history-chart"></canvas>
     </div>
-
 </div>
-<div id="chart-container row">
-    <div class="chart-column chart-container">
-        <canvas id="past-medical-chart"></canvas>
-    </div>
+
+<div class="charts-container row">
     <div class="chart-column chart-container">
         <canvas id="medications-pie-chart"></canvas>
+        <!-- Add the medications-pie-chart here in the same row -->
+    </div>
+    <div class="chart-column chart-container">
+        <canvas id="sex-pie-chart" class="smaller-chart"></canvas>
+        <!-- Add the class "smaller-chart" to adjust the size of sex-pie-chart -->
     </div>
 </div>
 
@@ -146,9 +162,9 @@
     </div>
 </div>
 
-<div class="chart-column smaller-chart chart-container" style="width: 50%;">
+<!-- <div class="chart-column smaller-chart chart-container" style="width: 50%;">
     <canvas id="sex-pie-chart"></canvas>
-</div>
+</div> -->
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -198,7 +214,7 @@
                     {
                         label: "Top 5 most common Past Medical Histories",
                         data: data.data,
-                        backgroundColor: "rgba(147, 112, 219, 0.6)",
+                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -208,7 +224,7 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Count",
+                            text: "Number of patients",
                         },
                     },
                     x: {
@@ -230,6 +246,7 @@
                 tickfont: {
                     size: 20,
                 },
+                fixedrange: true,
             },
             yaxis: {
                 title: 'Symptoms',
@@ -237,10 +254,11 @@
                 tickfont: {
                     size: 13,
                 },
+                fixedrange: true,
             },
             title: 'Age Group vs Symptoms',
         };
-        heatmapData.colorscale = 'YlOrRd';
+        heatmapData.colorscale = [[0, '#e5f7fb'], [1, '#00a0c5']];
         const heatmapContainer = document.getElementById("heatmap");
 
         if (heatmapContainer.data) {
@@ -300,7 +318,7 @@
                     {
                         label: "Top 5 most common Medications",
                         data: data.data,
-                        backgroundColor: "#0CAFFF",
+                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -310,7 +328,7 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Count",
+                            text: "Number of patients",
                         },
                     },
                     x: {
@@ -342,7 +360,7 @@
                     {
                         label: "Top 5 most common Family Histories",
                         data: data.data,
-                        backgroundColor: "#99FFFF"
+                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -352,7 +370,7 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Count",
+                            text: "Number of patients",
                         },
                     },
                     x: {
@@ -376,9 +394,10 @@
             if (label === bmiclass) {
                 return "red"; // Set the color for the specified class
             } else {
-                return "rgba(75, 192, 192, 0.2)"; // Default color
+                return "#00b2db"; // Default color
             }
         });
+        const xAxisLabel = `Input patients BMI falls in range: ${bmiclass} (red color bar)`;
         bmiHistogramChart = new Chart(bmiHistogramCtx, {
             type: "bar",
             data: {
@@ -404,8 +423,12 @@
                     },
                     x: {
                         title: {
-                            display: false,
-                            text: "BMI Index",
+                            display: true,
+                            text: xAxisLabel,
+                            font: {
+                                size: 16,
+                                color: 'black'
+                            }
                         },
                     },
                 },
@@ -428,7 +451,7 @@
                     {
                         label: "Smoking Habits",
                         data: data.data,
-                        backgroundColor: "#87CEFA"
+                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -438,12 +461,12 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Count",
+                            text: "Number of patients",
                         },
                     },
                     x: {
                         title: {
-                            display: true,
+                            display: false,
                             text: "Smoking Habits",
                         },
                     },
@@ -465,12 +488,19 @@
                     {
                         label: "Region wise patients",
                         data: data.data,
-                        backgroundColor: "rgba(0, 128, 128, 0.5)",
+                        backgroundColor: "#00b2db",
                     },
                 ],
             },
             options: {
                 scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: "Number of patients",
+                        },
+                    },
                     x: {
                         display: true,
                         text: "Region wise Distribution"
@@ -492,10 +522,19 @@
                 labels: data.labels,
                 datasets: [
                     {
+                        label:"Gender Distribution",
                         data: data.data,
                         backgroundColor: ["#36A2EB", "#FFCE56"], // Blue for male, yellow for female
                     },
                 ],
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display:true,
+                        text:"Gender Distribution",
+                    },
+                },
             },
         });
     }
@@ -512,7 +551,7 @@
                     {
                         label: "Top Symptoms",
                         data: data.percentages,
-                        backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        backgroundColor: "#00b2db",
                         borderColor: "rgba(75, 192, 192, 1)",
                         borderWidth: 1,
                     },
@@ -524,7 +563,7 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: "Percentage (%)",
+                            text: "Number of patients",
                         },
                     },
                     x: {

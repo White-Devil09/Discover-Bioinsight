@@ -9,7 +9,7 @@
     }
 
     .col-md-6 {
-        flex: 0 0 50%;
+        flex: 0 0 100%; /* Change to full width on smaller screens */
         max-width: 100%;
         padding: 10px;
     }
@@ -22,6 +22,7 @@
     .card {
         border: none;
         margin: 10px 0;
+        padding: 0 10px;
     }
 
     .blue-title {
@@ -30,10 +31,6 @@
         padding: 10px;
         border-radius: 15px;
         margin-bottom: 10px;
-    }
-
-    .left_space {
-        padding-left: 30px;
     }
 
     .right_space {
@@ -54,7 +51,6 @@
 
     .form-group {
         margin: 10px 0;
-        /* Spacing change */
     }
 
     .btn-submit {
@@ -65,9 +61,14 @@
         border-radius: 5px;
         cursor: pointer;
     }
+
+    /* Add media queries for responsive design */
+    @media (min-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 50%; /* Back to 50% width on larger screens */
+        }
+    }
 </style>
-
-
 
 <div class="container">
     <div class="row">
@@ -99,9 +100,9 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 left_space" style="margin-top: 1spx;">
+                        <div class="col-md-6 left_space" >
                             <div class="card text-black">
-                                <div class="card-body">
+                                <div>
                                     <div class="blue-title">
                                         <h4 class="card-title text-left mb-0">BMI Index</h4>
                                     </div>
@@ -135,7 +136,7 @@
                 </fieldset>
             </form>
             {% if show_alert %}
-            <p style="color: red;font-size: larger;">No record were found that match your patient profile</p>
+            <p style="color: red; font-size: larger;">No records were found that match your patient profile</p>
             {% endif %}
         </div>
     </div>
