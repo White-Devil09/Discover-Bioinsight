@@ -27,7 +27,7 @@ def platform():
 
 @app.route('/contact')
 def contact_us():
-    return "Hello contact"
+    return render_template('contact.html')
 
 @app.route('/coming_soon')
 def coming_soon():
@@ -82,8 +82,6 @@ def result():
     height = details.Height.data * float(1)
     if details.weight_units.data == 'lbs':
         weight = weight / 2.205
-    if details.Height_units.data == 'feets':
-        height = height * 30.48
 
     bmi_index = weight / ((height+1)/100)**2
     family_history_to_match = details.family_history.data
@@ -260,7 +258,7 @@ def result():
 
 
     bmi_ranges = [0, 10, 20, 30, 40, 50, 60, 70, 150]
-    bmi_labels = ['0-10', '10-20', '20-30', '30-40', '40-50', '50-60', '60-70', '70<']
+    bmi_labels = ['0-10', '10-20', '20-30', '30-40', '40-50', '50-60', '60-70', '>70']
 
     # Use pandas' cut function to categorize BMI into ranges
     df['BMI Category'] = pd.cut(df['BMI Index'], bins=bmi_ranges, labels=bmi_labels)

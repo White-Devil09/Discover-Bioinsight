@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<style>
+    .heading {
+        text-align: center;
+        font-size: 50px;
+        font-weight: bolder;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+
+    .logo-div {
+        display: flex;
+        flex-direction: column;
+        /* padding-left: 15%; */
+        align-items: self-start;
+    }
+
+    .logo-div a {
+        text-decoration: none;
+        padding-left: 12%;
+        padding-bottom: 5%;
+        margin-right: 20px;
+    }
+
+    .logo-div img {
+        height: 40px;
+        /* Set the desired height for your logos */
+    }
+
+    @media (max-width: 768px) {
+        .heading {
+            font-size: 40px;
+            margin-top: 15px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .heading {
+            font-size: 30px;
+            margin-top: 10px;
+            white-space: break-word;
+        }
+    }
+</style>
+
+<p class="heading">Questions/ Feedback/ Partnership?</p>
+
+<div class="logo-div">
+
+    <a href="https://linkedin.com/company/discoverbioinsights"><img src="email-logo.png" alt="linkedin Logo">
+        https://linkedin.com/company/discoverbioinsights</a>
+
+    <a href="contactus@discoverbioinsights.com"> <img src="email-logo.png" alt="Email Logo">
+        contactus@discoverbioinsights.com</a>
+</div>
+
+{% endblock %}

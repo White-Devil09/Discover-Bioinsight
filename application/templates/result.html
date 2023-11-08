@@ -4,7 +4,7 @@
     50,000 deidentified patient records, {{ count }} unique patient records <br> were found who had similar clinical
     profile as your patient.</p>
 <p style="font-size: 22px; text-align: center; font-family: 'Times New Roman', Times, serif; font-weight:500;"> <b> NOTE
-        FOR THE DOCTOR:</b> These analytics are to support you (the doctor) in making a clinical decision. Discover
+        FOR THE DOCTOR:</b> These insights are to support you (the doctor) in making a clinical decision. Discover
     BioInsights is NOT a diagnostic tool.</p>
 <p style="font-size: 20px; text-align: left; font-family: 'Times New Roman', Times, serif;">Time taken to fetch matching
     patient records: {{ time.total_seconds() }} seconds</p>
@@ -13,8 +13,10 @@
     table {
         font-size: 20px;
     }
+
     h5 {
-        margin-top: 10px; /* Adjust as needed for spacing */
+        margin-top: 10px;
+        /* Adjust as needed for spacing */
         text-align: left;
     }
 
@@ -86,7 +88,8 @@
     }
 </style>
 <div class="container">
-    <h2 style="text-align: center; font-family:'Times New Roman', Times, serif; font-weight: bold;">Similarity Analysis (out
+    <h2 style="text-align: center; font-family:'Times New Roman', Times, serif; font-weight: bold;">Similarity Analysis
+        (out
         of {{ count }})</h2>
     <table class="table" style="max-width: 1000px; margin: 0 auto; padding-bottom: 30px;">
         <thead>
@@ -234,6 +237,11 @@
                         },
                     },
                 },
+                plugins: {
+                    legend: {
+                        onClick: (e) => e.stopPropagation(),
+                    },
+                },
             },
         })
     }
@@ -301,6 +309,11 @@
                         stacked: true,
                     },
                 },
+                plugins: {
+                    legend: {
+                        onClick: (e) => e.stopPropagation(),
+                    },
+                },
             },
         });
     }
@@ -338,11 +351,13 @@
                         },
                     },
                 },
-                legend: {
-                    display: false,
-                },
                 tooltips: {
                     enabled: false, // Disable tooltips to prevent the display of color and label
+                },
+                plugins: {
+                    legend: {
+                        onClick: (e) => e.stopPropagation(),
+                    },
                 },
             },
         });
@@ -378,6 +393,11 @@
                             display: false,
                             text: "Family history",
                         },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        onClick: (e) => e.stopPropagation(),
                     },
                 },
             },
@@ -435,6 +455,11 @@
                 indexAxis: 'x',
                 barPercentage: 1.0,
                 categoryPercentage: 1.0,
+                plugins: {
+                    legend: {
+                        onClick: (e) => e.stopPropagation(),
+                    },
+                },
             },
         });
     }
@@ -469,6 +494,11 @@
                             display: false,
                             text: "Smoking Habits",
                         },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        onClick: (e) => e.stopPropagation(),
                     },
                 },
             },
@@ -506,6 +536,11 @@
                         text: "Region wise Distribution"
                     },
                 },
+                plugins: {
+                    legend: {
+                        onClick: (e) => e.stopPropagation(),
+                    },
+                },
             },
         });
 
@@ -522,7 +557,7 @@
                 labels: data.labels,
                 datasets: [
                     {
-                        label:"Gender Distribution",
+                        label: "Gender Distribution",
                         data: data.data,
                         backgroundColor: ["#36A2EB", "#FFCE56"], // Blue for male, yellow for female
                     },
@@ -531,12 +566,12 @@
             options: {
                 plugins: {
                     legend: {
-                        display:true,
-                        text:"Gender Distribution",
+                        onClick: (e) => e.stopPropagation(),
                     },
                 },
             },
         });
+
     }
 
     function createSymptomsChart(data) {
@@ -571,6 +606,11 @@
                             display: true,
                             text: "Symptoms",
                         },
+                    },
+                },
+                plugins: {
+                    legend: {
+                        onClick: (e) => e.stopPropagation(),
                     },
                 },
             },
