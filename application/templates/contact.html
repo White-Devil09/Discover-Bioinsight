@@ -13,7 +13,6 @@
     .logo-div {
         display: flex;
         flex-direction: column;
-        /* padding-left: 15%; */
         align-items: self-start;
     }
 
@@ -33,8 +32,7 @@
 
     .logo-div img {
         height: 60px;
-        margin-right: 50px;
-        /* Set the desired height for your logos */
+        margin-left: -30px;
     }
 
     @media (max-width: 768px) {
@@ -50,19 +48,27 @@
             margin-top: 10px;
             white-space: break-word;
         }
+
+        .logo-div img{
+            height: 50px;
+            margin-right: 15px;
+        }
         .logo-div a{
-            font-size: 20px;
-            white-space: break-word;
+            font-size: 16.5px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
         }
     }
 </style>
 
-<p class="heading">Questions/ Feedback/ Partnership?</p>
+<p class="heading">Questions/ Feedback/ Partnership</p>
 
 <div class="logo-div">
 
     <a href="https://linkedin.com/company/discoverbioinsights"><img src="{{ url_for('static', filename='images/linkedin-logo.png') }}" alt="linkedin Logo">
-        https://linkedin.com/ company/discoverbioinsights</a>
+       <div>https://linkedin.com/company/ discoverbioinsights</div> </a>
 
     <a href="mailto:contactus@discoverbioinsights.com"> <img src="{{ url_for('static', filename='images/email-logo.png') }}" alt="Email Logo">
         contactus@discoverbioinsights.com</a>

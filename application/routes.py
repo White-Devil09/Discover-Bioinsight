@@ -31,7 +31,7 @@ def contact_us():
 
 @app.route('/coming_soon')
 def coming_soon():
-    return " This page is under construction"
+    return render_template('coming_soon.html')
 
 @app.route('/patient_form', methods=['POST','GET'])
 def patient_form(show_alert=False):
