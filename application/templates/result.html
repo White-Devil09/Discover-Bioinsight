@@ -217,7 +217,6 @@
                     {
                         label: "Top 5 most common Past Medical Histories",
                         data: data.data,
-                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -331,7 +330,6 @@
                     {
                         label: "Top 5 most common Medications",
                         data: data.data,
-                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -375,7 +373,6 @@
                     {
                         label: "Top 5 most common Family Histories",
                         data: data.data,
-                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -412,9 +409,9 @@
 
         const backgroundColors = data.labels.map(label => {
             if (label === bmiclass) {
-                return "red"; // Set the color for the specified class
-            } else {
-                return "#00b2db"; // Default color
+                return "red"; 
+            }else{
+                return "rgba(0, 0, 237, 0.25)";
             }
         });
         const xAxisLabel = `Input patients BMI falls in range: ${bmiclass} (red color bar)`;
@@ -427,8 +424,6 @@
                         label: "BMI Index",
                         data: data.histogram_data,
                         backgroundColor: backgroundColors,
-                        borderColor: "rgba(75, 192, 192, 1)",
-                        borderWidth: 1,
                     },
                 ],
             },
@@ -476,7 +471,6 @@
                     {
                         label: "Smoking Habits",
                         data: data.data,
-                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -518,7 +512,6 @@
                     {
                         label: "Region wise patients",
                         data: data.data,
-                        backgroundColor: "#00b2db",
                     },
                 ],
             },
@@ -586,9 +579,6 @@
                     {
                         label: "Top Symptoms",
                         data: data.percentages,
-                        backgroundColor: "#00b2db",
-                        borderColor: "rgba(75, 192, 192, 1)",
-                        borderWidth: 1,
                     },
                 ],
             },
