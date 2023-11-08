@@ -19,13 +19,21 @@
 
     .logo-div a {
         text-decoration: none;
+        color: black;
+        font-size: 25px;
         padding-left: 12%;
-        padding-bottom: 5%;
+        margin-bottom: 5%;
         margin-right: 20px;
     }
 
+    .logo-div a:hover {
+        color: #5c8ec4;
+        text-decoration: underline;
+    }
+
     .logo-div img {
-        height: 40px;
+        height: 60px;
+        margin-right: 50px;
         /* Set the desired height for your logos */
     }
 
@@ -49,10 +57,10 @@
 
 <div class="logo-div">
 
-    <a href="https://linkedin.com/company/discoverbioinsights"><img src="email-logo.png" alt="linkedin Logo">
+    <a href="https://linkedin.com/company/discoverbioinsights"><img src="{{ url_for('static', filename='images/linkedin-logo.png') }}" alt="linkedin Logo">
         https://linkedin.com/company/discoverbioinsights</a>
 
-    <a href="contactus@discoverbioinsights.com"> <img src="email-logo.png" alt="Email Logo">
+    <a href="contactus@discoverbioinsights.com"> <img src="{{ url_for('static', filename='images/email-logo.png') }}" alt="Email Logo">
         contactus@discoverbioinsights.com</a>
 </div>
 

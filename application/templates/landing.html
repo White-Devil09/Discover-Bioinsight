@@ -68,6 +68,25 @@
         text-align: left;
     }
 
+    .footer{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .footer img{
+        height: 250px;
+    }
+
+    .footer-tag{
+        text-align: center;
+        font-size: 50px;
+        font-weight: bold;
+        color:#0853a3;
+        margin-top: 40px;
+        margin-bottom: 20px;
+    }
+
     /* Responsive layout for mobile screens */
     @media (max-width: 988px) {
         .about-container {
@@ -103,6 +122,14 @@
 
         .rev {
             flex-direction: column-reverse;
+        }
+
+        .footer-tag{
+            font-size: 30px;
+        }
+
+        .footer img{
+            height: 120px;
         }
     }
 </style>
@@ -177,10 +204,10 @@
 </div>
 <div style="border-bottom:5px solid #0853a3; width: 100%;"></div>
 <div>
-    <div>Impacting patient lives with support from</div>
-    <div>
-        <img src="" alt="thub logo">
-        <img src="" alt="rich logo">
+    <div class="footer-tag">Impacting patient lives with support from</div>
+    <div  class="footer">
+        <img src="{{ url_for('static', filename='images/thub-logo.png') }}" alt="thub logo" >
+        <img src="{{ url_for('static', filename='images/rich-logo.png') }}" alt="rich logo" >
     </div>
 </div>
 
