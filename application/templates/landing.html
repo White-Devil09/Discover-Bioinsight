@@ -68,23 +68,35 @@
         text-align: left;
     }
 
-    .footer{
+    .footer {
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    .footer img{
+    .footer img {
         height: 250px;
     }
 
-    .footer-tag{
+    .footer-tag {
         text-align: center;
         font-size: 50px;
         font-weight: bold;
-        color:#0853a3;
+        color: #0853a3;
         margin-top: 40px;
         margin-bottom: 20px;
+    }
+
+    .link-btns {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 10vh;
+        margin: 0;
+    }
+
+    .link-btns button {
+        margin: 5px;
     }
 
     /* Responsive layout for mobile screens */
@@ -124,13 +136,19 @@
             flex-direction: column-reverse;
         }
 
-        .footer-tag{
+        .footer-tag {
             font-size: 30px;
         }
 
-        .footer img{
+        .footer img {
             height: 120px;
         }
+
+        .link-btns{
+            flex-direction: column;
+            height: 15vh;
+        }
+
     }
 </style>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -194,20 +212,23 @@
         </div>
     </div>
 </div>
-<div style="display: flex; justify-content: center; align-items: center; height: 10vh; margin: 0;">
-    <div>
-        <button
+<div class="link-btns">
+    <button
         style="background-color: #0853a3; color: #fff; border: none; padding: 10px 20px; border-radius: 25px; font-size: 16px; font-weight: bold;">
         <a href="{{ url_for('platform') }}" style="text-decoration: none; color: #fff;">Try out our platform!</a>
     </button>
-</div>
+    <button
+        style="background-color: #0853a3; color: #fff; border: none; padding: 10px 20px; border-radius: 25px; font-size: 16px; font-weight: bold;">
+        <a href="https://www.linkedin.com/posts/discoverbioinsights_using-evidence-based-primary-care-platform-activity-7128963501607276545-hB1K?utm_source=share&utm_medium=member_desktop"
+            style="text-decoration: none; color: #fff;">How it works? (Video)</a>
+    </button>
 </div>
 <div style="border-bottom:5px solid #0853a3; width: 100%;"></div>
 <div>
     <div class="footer-tag">Impacting patient lives with support from</div>
-    <div  class="footer">
-        <img src="{{ url_for('static', filename='images/thub-logo.png') }}" alt="thub logo" >
-        <img src="{{ url_for('static', filename='images/rich-logo.png') }}" alt="rich logo" >
+    <div class="footer">
+        <img src="{{ url_for('static', filename='images/thub-logo.png') }}" alt="thub logo">
+        <img src="{{ url_for('static', filename='images/rich-logo.png') }}" alt="rich logo">
     </div>
 </div>
 
